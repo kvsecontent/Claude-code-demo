@@ -28,6 +28,13 @@ claude
 - **IDE extensions** — available for VS Code and JetBrains
 - **Hooks & automation** — configure automated behaviors via `settings.json`
 
+## Classroom Games
+
+- **[Describing Word Balloons](games/describing-word-balloons/index.html)** (Grades 3–5): pop the balloons that carry describing words (adjectives). Open the file in any web browser; it needs no install.
+  - *Spot It!* (Grade 3+): pop adjectives and leave nouns and verbs alone.
+  - *Finish the Sentence* (Grade 4+): pop the adjective that fits the gap.
+  - *Sense Sort* (Grade 5): pop only adjectives of one kind (colour, size, taste, sound and more).
+
 ## Resources
 
 - [Claude Code Docs](https://docs.anthropic.com/claude/docs/claude-code)
