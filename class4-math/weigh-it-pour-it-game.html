@@ -53,14 +53,14 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;justify-cont
 .iconbtn{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-weight:600}
 
 /* mode tabs */
-nav.modes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+nav.modes{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
 .mode{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:8px 10px;text-align:left;display:flex;flex-direction:column;gap:0;min-width:0}
 .mode .n{font-family:var(--f-display);font-weight:800;font-size:.8rem;color:var(--brass);letter-spacing:.06em;text-transform:uppercase}
 .mode .t{font-family:var(--f-display);font-weight:700;font-size:1.12rem;line-height:1.1}
 .mode .d{font-size:.82rem;color:var(--muted);line-height:1.25}
 .mode .got{font-size:.8rem;color:var(--brass);font-weight:700;min-height:1.2em}
 .mode[aria-pressed="true"]{border-color:var(--teal);background:var(--chip);box-shadow:0 3px 0 var(--teal)}
-@media (max-width:820px){nav.modes{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:980px){nav.modes{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:480px){nav.modes{grid-template-columns:repeat(2,minmax(0,1fr))}.mode .d{display:none}}
 
 /* main */
@@ -90,6 +90,10 @@ main{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:14px;ali
 .stepper button{background:none;border:0;width:46px;font-size:1.5rem;font-weight:700}
 .stepper input{width:84px;border:0;border-inline:2px solid var(--line);text-align:center;font-family:var(--f-display);font-size:1.6rem;font-weight:800;background:var(--card);color:var(--ink);font-variant-numeric:tabular-nums}
 .stepper input::-webkit-inner-spin-button{display:none}
+.unitlbl{align-self:center;font-family:var(--f-display);font-weight:800;font-size:1.3rem}
+.stepper input.wide{width:110px}
+.steps{margin:.3em 0 0;padding-left:1.2em;color:var(--ink);font-weight:400}
+.hintbox{background:var(--chip);border:1px dashed var(--brass);border-radius:12px;padding:8px 12px;color:var(--ink)}
 .fb{border-radius:12px;padding:10px 14px;font-weight:600}
 .fb.good{background:var(--good-bg);color:var(--good)}
 .fb.bad{background:var(--bad-bg);color:var(--bad)}
@@ -254,6 +258,7 @@ footer{color:var(--muted);font-size:.85rem;text-align:center}
       <li><b>Balance It!</b>: repeated addition and multiplication (5 × 10 g = 50 g). Ask “How many?” before anyone taps.</li>
       <li><b>Sweet Shop</b>: Mr Shrinathan’s kaju katli and 1 kg packets. Division as equal sharing; ½ kg and ¼ kg.</li>
       <li><b>Guess the Weight</b>: ordering heaviest to lightest, the estimate table from the book, and choosing kg or g.</li>
+      <li><b>Problem Solving</b>: one- and two-step word problems (add, subtract, multiply, share) with a hint and a worked solution. Children can solve in their notebooks first.</li>
       <li><b>Pour It</b>: capacity in L and ml with Mr Krishna’s perfumed oil, dosing cups and droppers.</li>
     </ul>
     Weights of animals, fruits and vegetables are estimates. Follow up with a real pan balance and 1 kg, 500 g and 100 g weights, as the textbook suggests.
@@ -537,12 +542,58 @@ const POUR=[
   {who:'Milk cans',size:100,target:800,pname:'100 ml can',vname:'800 ml of milk',q:'How many 100 ml are there in 800 ml?'},
 ];
 
+const PROBLEMS=[
+  {who:'Shopping',q:'Shabnam’s mother buys a 1 kg salt packet and a 500 g dal packet. How many grams is that in all?',ans:1500,unit:'g',max:5000,
+   L:[['salt',1],['dal500',1]],R:[['w1kg',1],['w500',1]],hint:'Change 1 kg into grams first. 1 kg = 1000 g.',
+   steps:['1 kg = 1000 g','1000 g + 500 g = 1500 g']},
+  {who:'Kitchen',q:'Mother had 1 kg of sugar. She used 250 g to make kheer. How many grams of sugar are left?',ans:750,unit:'g',max:5000,
+   L:[['w1kg',1]],R:[['sugar',1],['w500',1],['w250',1]],hint:'Start with 1000 g and take away what was used.',
+   steps:['1 kg = 1000 g','1000 g − 250 g = 750 g']},
+  {who:'Pencil box',q:'One eraser weighs 10 g. Taran has 8 erasers. What is the weight of all 8 erasers?',ans:80,unit:'g',max:5000,
+   L:[['eraser',8]],R:[['w50',1],['eraser',3]],hint:'8 erasers of 10 g each: multiply.',
+   steps:['8 × 10 g = 80 g']},
+  {who:'Shopping',q:'A soap bar weighs 100 g. Rita buys 6 soap bars. How many grams do they weigh together?',ans:600,unit:'g',max:5000,
+   L:[['soap',6]],R:[['w500',1],['w100',1]],hint:'6 groups of 100 g.',
+   steps:['6 × 100 g = 600 g']},
+  {who:'Sweet shop',q:'Mr Shrinathan has 2 kg of kaju katli. He packs it in boxes of 250 g each. How many boxes does he need?',ans:8,unit:'boxes',
+   L:[['kaju',2]],R:[['box250',8]],hint:'How many 250 g boxes make 1 kg? Now double it for 2 kg.',
+   steps:['1 kg = 4 boxes of 250 g','2 kg = 2 × 4 = 8 boxes']},
+  {who:'Spice shop',q:'A haldi packet weighs 50 g. How many haldi packets weigh the same as ½ kg?',ans:10,unit:'packets',
+   L:[['w500',1]],R:[['haldi',10]],hint:'½ kg = 500 g. How many 50s make 500?',
+   steps:['½ kg = 500 g','500 g ÷ 50 g = 10 packets']},
+  {who:'Olympics',q:'Mirabai Chanu lifted a total of 202 kg in two lifts. In the first lift she lifted 87 kg. How much did she lift in the second lift?',ans:115,unit:'kg',max:5000,
+   L:[['mirabai',1]],R:[],hint:'Total minus the first lift gives the second lift.',
+   steps:['202 kg − 87 kg = 115 kg']},
+  {who:'Home',q:'A family eats 5 kg of rice every week. How many kilograms of rice will they eat in 4 weeks?',ans:20,unit:'kg',
+   L:[['sack20',1]],R:[['w1kg',20]],hint:'5 kg each week, for 4 weeks.',
+   steps:['4 × 5 kg = 20 kg']},
+  {who:'Ration shop',q:'A 25 kg rice sack is shared equally into 5 bags. How many kilograms are in each bag?',ans:5,unit:'kg',
+   L:[['sack25',1]],R:[['atta',5]],hint:'Share 25 kg equally among 5 bags.',
+   steps:['25 kg ÷ 5 = 5 kg in each bag','Check: 5 × 5 kg = 25 kg']},
+  {who:'School bag',q:'Taran’s bag has 3 books of 300 g each and a lunch box of 500 g. How many grams is that in all?',ans:1400,unit:'g',max:5000,
+   L:[['book',3],['dal500',1]],R:[['w1kg',1],['w250',1],['w100',1],['w50',1]],hint:'First find the weight of 3 books, then add the lunch box.',
+   steps:['3 × 300 g = 900 g','900 g + 500 g = 1400 g = 1 kg 400 g']},
+  {who:'Compare',q:'Packet A has 3 dal packets of 250 g each. Packet B weighs 800 g. Packet B is heavier. By how many grams?',ans:50,unit:'g',max:5000,
+   L:[['dal250',3]],R:[['w500',1],['w250',1],['w50',1]],hint:'Find the weight of packet A first.',
+   steps:['A: 3 × 250 g = 750 g','800 g − 750 g = 50 g']},
+  {who:'Milk',q:'Rita drinks 250 ml of milk every day. How many millilitres of milk does she drink in 4 days?',ans:1000,unit:'ml',max:5000,
+   L:[['bottle',1]],R:[],hint:'4 groups of 250 ml.',
+   steps:['4 × 250 ml = 1000 ml = 1 L']},
+  {who:'Save water',q:'A leaking tap wastes 100 ml of water every hour. How many millilitres are wasted in 10 hours?',ans:1000,unit:'ml',max:5000,
+   L:[['bottle',1]],R:[],hint:'10 groups of 100 ml.',
+   steps:['10 × 100 ml = 1000 ml = 1 L of water wasted!','Close taps tightly and report leaks.']},
+  {who:'Perfume shop',q:'Mr Krishna has 2 L of perfumed oil. He fills bottles of 200 ml each. How many bottles can he fill?',ans:10,unit:'bottles',
+   L:[['bottle',2]],R:[],hint:'1 L = 1000 ml, so 2 L = 2000 ml. How many 200s make 2000?',
+   steps:['2 L = 2000 ml','1 L fills 5 bottles of 200 ml','2 L fills 2 × 5 = 10 bottles']},
+];
+
 const MODES=[
   {id:'tilt',t:'Tilt Detective',d:'Which side goes down?',stage:'bal',make:()=>shuffle(TILT).slice(0,8)},
   {id:'build',t:'Balance It!',d:'Add weights till it balances',stage:'bal',make:()=>BUILD.slice()},
   {id:'shop',t:'Sweet Shop',d:'Boxes, packets and ½ kg',stage:'bal',make:()=>SHOP.slice()},
   {id:'guess',t:'Guess the Weight',d:'Order, estimate, kg or g',stage:'bal',make:guessRounds},
   {id:'pour',t:'Pour It',d:'Litres and millilitres',stage:'jug',make:()=>POUR.slice()},
+  {id:'solve',t:'Problem Solving',d:'Word problems to think through',stage:'bal',make:()=>shuffle(PROBLEMS).slice(0,10)},
 ];
 
 /* ---------- game state ---------- */
@@ -591,7 +642,7 @@ function renderRound(){
   dots();
   if(S.i>=S.rounds.length) return renderSummary();
   const r=S.rounds[S.i], id=MODES[S.m].id;
-  ({tilt:roundTilt,build:roundBuild,shop:roundShop,guess:roundGuess,pour:roundPour})[id](r);
+  ({tilt:roundTilt,build:roundBuild,shop:roundShop,guess:roundGuess,pour:roundPour,solve:roundSolve})[id](r);
 }
 
 /* Game 1: Tilt Detective */
@@ -667,11 +718,12 @@ function roundBuild(r){
 }
 
 /* number entry shared by Sweet Shop and Pour It */
-function numberInput(onCheck){
-  $('ctrl').innerHTML=`<div class="numrow"><div class="stepper"><button type="button" data-d="-1" aria-label="One less">−</button><input id="num" type="number" inputmode="numeric" min="0" max="200" value="1" aria-label="Your answer"><button type="button" data-d="1" aria-label="One more">+</button></div><button class="btn primary" id="check">Check</button></div>`;
+function numberInput(onCheck,o={}){
+  const max=o.max||200;
+  $('ctrl').innerHTML=`<div class="numrow"><div class="stepper"><button type="button" data-d="-1" aria-label="One less">−</button><input id="num" class="${max>200?'wide':''}" type="number" inputmode="numeric" min="0" max="${max}" value="${o.start??1}" aria-label="Your answer"><button type="button" data-d="1" aria-label="One more">+</button></div>${o.unit?`<span class="unitlbl">${esc(o.unit)}</span>`:''}<button class="btn primary" id="check">Check</button></div>`;
   const inp=$('num');
-  $('ctrl').querySelectorAll('[data-d]').forEach(b=>b.addEventListener('click',()=>{inp.value=Math.max(0,Math.min(200,(+inp.value||0)+ +b.dataset.d));}));
-  const go=()=>{const v=Math.max(0,Math.min(200,Math.round(+inp.value||0)));inp.value=v;onCheck(v);};
+  $('ctrl').querySelectorAll('[data-d]').forEach(b=>b.addEventListener('click',()=>{inp.value=Math.max(0,Math.min(max,(+inp.value||0)+ +b.dataset.d));}));
+  const go=()=>{const v=Math.max(0,Math.min(max,Math.round(+inp.value||0)));inp.value=v;onCheck(v);};
   $('check').addEventListener('click',go);
   inp.addEventListener('keydown',e=>{if(e.key==='Enter')go();});
 }
@@ -800,6 +852,34 @@ function roundPour(r){
       }
     });
   });
+}
+
+/* Game 6: Problem Solving */
+function roundSolve(r){
+  $('who').textContent=r.who;
+  $('q').textContent=r.q;
+  $('sub').innerHTML=`Work it out in your notebook, then type the answer. <button class="btn" id="hintBtn" style="font-size:.95rem;padding:4px 10px">Need a hint?</button>`;
+  setPans(r.L,[],{held:true});
+  setHeld(true,'Held still — solve the problem first');
+  $('hintBtn').onclick=()=>{$('hintBtn').outerHTML=`<span class="hintbox" style="display:block;margin-top:6px">Hint: ${esc(r.hint)}</span>`;};
+  S.tries=0;
+  const steps=`<ol class="steps">${r.steps.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`;
+  const reveal=()=>{if(!r.R.length){setHeld(false);return;}setPans(r.L,r.R,{weights:true});};
+  numberInput(v=>{
+    S.tries++;
+    if(v===r.ans){
+      sfx.ok();lockNumber();reveal();
+      feedback(true,`Correct! <span class="eq">${r.ans.toLocaleString('en-IN')} ${esc(r.unit)}</span>${steps}`);
+      S.res[S.i]=S.tries===1;finishRound(S.tries===1);
+    } else if(S.tries>=3){
+      sfx.no();lockNumber();reveal();
+      feedback(false,`The answer is <b>${r.ans} ${esc(r.unit)}</b>. Here is how:${steps}`);
+      finishRound(false);
+    } else {
+      sfx.no();
+      feedback(false,`Not quite. Try again (${3-S.tries} ${3-S.tries===1?'try':'tries'} left). <small>Hint: ${esc(r.hint)}</small>`);
+    }
+  },{max:r.max||200,unit:r.unit,start:0});
 }
 
 function renderSummary(){
