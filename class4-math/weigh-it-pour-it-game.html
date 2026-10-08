@@ -1,0 +1,827 @@
+<title>Weigh It, Pour It Game</title>
+<meta name="description" content="Pan balance game for Class 4 Maths (Maths Mela) Chapter 8: Weigh It, Pour It">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Mukta:wght@400;600;700&display=swap">
+<style>
+/* Layout: a kirana-shop counter. Question card on the left, brass taraazu (pan balance) on the right; stacks on phones. */
+:root{
+  --paper:#E6F0EC; --card:#FFFFFF; --ink:#13302C; --muted:#4D6964; --line:#C6D8D2; --chip:#EEF5F2;
+  --teal:#1C6C65; --teal-hi:#24887F; --on-teal:#FFFFFF;
+  --brass:#B07A1C; --brass-hi:#E9BA57; --brass-lo:#7A5310;
+  --good:#1F7F48; --good-bg:#DAF1E2; --bad:#C2391F; --bad-bg:#FBE2DC;
+  --water:#3A8BD3; --water-hi:#8CC3F0;
+  --stand:#5E4A2C;
+  --f-display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Mukta","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1D1B; --card:#162A27; --ink:#E4EFEB; --muted:#9DB8B2; --line:#2B4541; --chip:#1D3532;
+    --teal:#47BFB2; --teal-hi:#6AD3C7; --on-teal:#0B1E1C;
+    --brass:#D29F3A; --brass-hi:#F2CB72; --brass-lo:#8D6418;
+    --good:#5CD08C; --good-bg:#173A27; --bad:#FF8467; --bad-bg:#43211A;
+    --water:#4E9FE6; --water-hi:#9FD0F8; --stand:#A88A5A;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1D1B; --card:#162A27; --ink:#E4EFEB; --muted:#9DB8B2; --line:#2B4541; --chip:#1D3532;
+  --teal:#47BFB2; --teal-hi:#6AD3C7; --on-teal:#0B1E1C;
+  --brass:#D29F3A; --brass-hi:#F2CB72; --brass-lo:#8D6418;
+  --good:#5CD08C; --good-bg:#173A27; --bad:#FF8467; --bad-bg:#43211A;
+  --water:#4E9FE6; --water-hi:#9FD0F8; --stand:#A88A5A;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.45;padding-inline:16px;padding-block:14px 32px}
+.wrap{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--brass-hi);outline-offset:2px}
+
+/* header */
+header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{width:52px;height:52px;flex:none}
+.brand h1{font-family:var(--f-display);font-weight:800;font-size:clamp(1.6rem,4vw,2.3rem);line-height:1;margin:0;letter-spacing:-.01em}
+.brand h1 span{color:var(--brass)}
+.brand p{margin:2px 0 0;color:var(--muted);font-size:.9rem;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+.hud{display:flex;gap:8px;align-items:center}
+.pill{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 14px;font-family:var(--f-display);font-weight:700;font-size:1.1rem;display:flex;gap:6px;align-items:center;font-variant-numeric:tabular-nums}
+.pill .star{color:var(--brass-hi);filter:drop-shadow(0 1px 0 var(--brass-lo))}
+.iconbtn{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-weight:600}
+
+/* mode tabs */
+nav.modes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.mode{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:8px 10px;text-align:left;display:flex;flex-direction:column;gap:0;min-width:0}
+.mode .n{font-family:var(--f-display);font-weight:800;font-size:.8rem;color:var(--brass);letter-spacing:.06em;text-transform:uppercase}
+.mode .t{font-family:var(--f-display);font-weight:700;font-size:1.12rem;line-height:1.1}
+.mode .d{font-size:.82rem;color:var(--muted);line-height:1.25}
+.mode .got{font-size:.8rem;color:var(--brass);font-weight:700;min-height:1.2em}
+.mode[aria-pressed="true"]{border-color:var(--teal);background:var(--chip);box-shadow:0 3px 0 var(--teal)}
+@media (max-width:820px){nav.modes{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:480px){nav.modes{grid-template-columns:repeat(2,minmax(0,1fr))}.mode .d{display:none}}
+
+/* main */
+main{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:14px;align-items:start}
+@media (max-width:860px){main{grid-template-columns:minmax(0,1fr)}.stagewrap{order:-1}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.prog{display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--muted);font-weight:600;font-size:.9rem}
+.dots{display:flex;gap:5px;flex-wrap:wrap}
+.dots i{width:12px;height:12px;border-radius:50%;background:var(--line);display:block}
+.dots i.ok{background:var(--good)} .dots i.no{background:var(--bad)} .dots i.now{outline:2px solid var(--teal);outline-offset:1px}
+.who{font-size:.85rem;color:var(--brass);font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin:0}
+#q{font-family:var(--f-display);font-weight:700;font-size:clamp(1.35rem,2.6vw,1.75rem);line-height:1.15;margin:0;text-wrap:balance}
+#sub{margin:0;color:var(--muted)}
+#sub b{color:var(--ink)}
+.hi{font-size:.92em;color:var(--muted)}
+.ctrl{display:flex;flex-direction:column;gap:10px}
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.btn{background:var(--chip);border:2px solid var(--line);border-radius:12px;padding:10px 12px;font-family:var(--f-display);font-weight:700;font-size:1.12rem;line-height:1.15}
+.btn:hover{border-color:var(--teal)}
+.btn.primary{background:var(--teal);border-color:var(--teal);color:var(--on-teal)}
+.btn.primary:hover{background:var(--teal-hi)}
+.btn.right{border-color:var(--good);background:var(--good-bg)}
+.btn.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.btn:disabled{cursor:default;opacity:.75}
+.numrow{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap}
+.stepper{display:flex;border:2px solid var(--line);border-radius:12px;overflow:hidden;background:var(--chip)}
+.stepper button{background:none;border:0;width:46px;font-size:1.5rem;font-weight:700}
+.stepper input{width:84px;border:0;border-inline:2px solid var(--line);text-align:center;font-family:var(--f-display);font-size:1.6rem;font-weight:800;background:var(--card);color:var(--ink);font-variant-numeric:tabular-nums}
+.stepper input::-webkit-inner-spin-button{display:none}
+.fb{border-radius:12px;padding:10px 14px;font-weight:600}
+.fb.good{background:var(--good-bg);color:var(--good)}
+.fb.bad{background:var(--bad-bg);color:var(--bad)}
+.fb .eq{display:block;font-family:var(--f-display);font-size:1.35rem;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums}
+.fb small{display:block;color:var(--ink);font-weight:400}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:420px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.card{position:relative;background:var(--chip);border:2px solid var(--line);border-radius:14px;padding:10px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:15px;min-width:0}
+.card .item{font-size:15px}
+.card .nm{font-size:.85rem;font-weight:600;text-align:center;line-height:1.1}
+.card .rank{position:absolute;top:-8px;left:-8px;width:28px;height:28px;border-radius:50%;background:var(--teal);color:var(--on-teal);font-family:var(--f-display);font-weight:800;display:grid;place-items:center}
+.card.done{border-color:var(--teal)}
+.summary{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.summary .big{font-family:var(--f-display);font-size:2.4rem;font-weight:800;line-height:1}
+.summary .stars{font-size:2rem;letter-spacing:.1em;color:var(--brass-hi)}
+.summary .stars .off{color:var(--line)}
+
+/* stage */
+.stagewrap{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.balance{position:relative;width:100%;overflow:hidden;border-radius:12px;background:
+  radial-gradient(120% 70% at 50% 100%, var(--chip) 0 40%, transparent 41%), var(--card)}
+.tag{position:absolute;top:8px;left:8px;z-index:6;background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:1px 10px;font-size:.8rem;font-weight:700;color:var(--muted)}
+.tag.held{color:var(--bad)}
+.post{position:absolute;left:50%;top:17%;bottom:5%;width:2.4%;transform:translateX(-50%);background:linear-gradient(90deg,var(--brass-lo),var(--brass-hi) 45%,var(--brass) 70%,var(--brass-lo));border-radius:4px}
+.base{position:absolute;left:50%;bottom:1.5%;width:30%;height:5%;transform:translateX(-50%);background:linear-gradient(var(--brass-hi),var(--brass) 50%,var(--brass-lo));border-radius:40% 40% 10px 10px}
+.dial{position:absolute;left:50%;top:3%;width:15%;aspect-ratio:2/1;max-width:100%;transform:translateX(-50%);border:3px solid var(--brass);border-bottom:0;border-radius:999px 999px 0 0;background:var(--chip)}
+.dial::after{content:"";position:absolute;left:50%;top:0;width:2px;height:28%;background:var(--brass-lo);transform:translateX(-50%)}
+.needle{position:absolute;left:50%;width:.8%;min-width:3px;height:13%;background:var(--bad);border-radius:3px;transform-origin:50% 100%;z-index:3}
+.beam{position:absolute;left:0;top:0;height:2.6%;min-height:8px;background:linear-gradient(var(--brass-hi),var(--brass) 55%,var(--brass-lo));border-radius:6px;z-index:2;transform-origin:50% 50%}
+.beam::before,.beam::after{content:"";position:absolute;top:50%;width:1.1em;height:1.1em;border-radius:50%;background:var(--brass);border:3px solid var(--brass-lo);transform:translateY(-50%)}
+.beam::before{left:-.4em}.beam::after{right:-.4em}
+.pivot{position:absolute;width:1.4em;height:1.4em;border-radius:50%;background:var(--brass-hi);border:3px solid var(--brass-lo);z-index:4;transform:translate(-50%,-50%)}
+.pan{position:absolute;left:0;top:0;width:36%;height:54%;z-index:3}
+.pan svg.str{position:absolute;inset:0 0 7% 0;width:100%;height:93%;overflow:visible}
+.pan svg.str line{stroke:var(--brass-lo);stroke-width:2;vector-effect:non-scaling-stroke}
+.dish{position:absolute;left:0;right:0;bottom:0;height:8%;background:linear-gradient(var(--brass-hi),var(--brass) 45%,var(--brass-lo));border-radius:4px 4px 50% 50% / 4px 4px 100% 100%}
+.load{position:absolute;left:3%;right:3%;bottom:7.5%;display:flex;flex-wrap:wrap-reverse;justify-content:center;align-items:flex-end;gap:.15em;z-index:2;max-height:88%;overflow:visible}
+.wlabel{position:absolute;left:50%;top:102%;transform:translateX(-50%);white-space:nowrap;background:var(--ink);color:var(--card);border-radius:999px;padding:0 .6em;font-family:var(--f-display);font-weight:700;font-size:.9em;font-variant-numeric:tabular-nums}
+.pan.click .item{cursor:pointer}
+.pan.click .item:hover{filter:brightness(1.1) drop-shadow(0 0 3px var(--bad))}
+
+/* items */
+.item{position:relative;display:inline-flex;flex-direction:column;align-items:center;gap:.1em;line-height:1}
+.item.sm{font-size:.86em}.item.lg{font-size:1.25em}
+.load.crowd .item{font-size:.85em}.load.packed .item{font-size:.7em}
+.emo{font-size:2.6em;line-height:1}
+.cap{font-size:.62em;font-weight:700;background:var(--card);color:var(--ink);border:1px solid var(--line);padding:0 .45em;border-radius:1em;white-space:nowrap}
+.badge{position:absolute;top:-.5em;right:-.7em;background:var(--teal);color:var(--on-teal);border-radius:1em;font-size:.72em;padding:.05em .45em;font-weight:800;font-family:var(--f-display);z-index:2}
+.shp{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;background:var(--c);color:var(--t);font-family:var(--f-display);line-height:1;text-align:center;position:relative}
+.shp b{font-size:.68em;font-weight:800;letter-spacing:.02em}
+.shp i{font-style:normal;font-size:.66em;font-weight:700}
+.s-pkt{width:2.7em;height:3.3em;border-radius:.4em .4em .2em .2em;box-shadow:inset 0 .45em 0 rgba(255,255,255,.28),inset 0 -.22em 0 rgba(0,0,0,.18)}
+.s-wt{width:2.7em;height:2.2em;background:linear-gradient(#6a7075,#2c3034);clip-path:polygon(16% 18%,38% 18%,38% 0,62% 0,62% 18%,84% 18%,100% 100%,0 100%);padding-top:.5em}
+.s-cyl{width:2.5em;height:3.9em;border-radius:1.1em 1.1em .45em .45em;box-shadow:inset .4em 0 0 rgba(255,255,255,.25)}
+.s-btl{width:1.8em;height:3.4em;border-radius:.6em .6em .35em .35em;margin-top:.5em;box-shadow:inset .3em 0 0 rgba(255,255,255,.35)}
+.s-btl::before{content:"";position:absolute;top:-.55em;width:.7em;height:.6em;background:#2b5d8f;border-radius:.15em .15em 0 0}
+.s-eraser{width:2.7em;height:1.5em;border-radius:.25em;background:linear-gradient(90deg,#F08BA1 0 58%,#3F86DA 58%)}
+.s-soap{width:2.8em;height:1.7em;border-radius:.9em}
+.s-box{width:2.8em;height:1.9em;border-radius:.25em;background:linear-gradient(90deg,transparent 44%,#E6B43C 44% 56%,transparent 56%),var(--c)}
+.s-box i,.s-box b{background:var(--c);padding:0 .15em;border-radius:.15em}
+.s-tray{width:4.2em;height:2em;border-radius:.35em;background:repeating-linear-gradient(45deg,#E9E4D8 0 .5em,#D9D2C1 .5em 1em);box-shadow:inset 0 0 0 .18em #B9B3A4}
+.s-sack{width:3.1em;height:3.6em;border-radius:1.2em 1.2em .55em .55em;box-shadow:inset 0 .5em 0 rgba(0,0,0,.12)}
+.s-bar{width:5em;height:1.6em;background:linear-gradient(transparent 42%,#555 42% 58%,transparent 58%)}
+.s-bar::before,.s-bar::after{content:"";position:absolute;top:0;width:.9em;height:1.6em;background:#2c3034;border-radius:.2em}
+.s-bar::before{left:.2em}.s-bar::after{right:.2em}
+
+/* tray of weights (Balance It!) */
+.trayrow{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.trayrow .lbl{width:100%;font-size:.85rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.tbtn{background:var(--chip);border:2px dashed var(--line);border-radius:12px;padding:8px 8px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:15px;min-width:76px}
+.tbtn:hover{border-color:var(--teal);border-style:solid}
+.tbtn .add{font-family:var(--f-display);font-weight:800;font-size:.95rem;color:var(--teal)}
+
+/* jug stage (Pour It) */
+.jugstage{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:10px;align-items:end;padding:10px;min-height:300px;border-radius:12px;background:radial-gradient(120% 60% at 50% 100%,var(--chip) 0 45%,transparent 46%),var(--card)}
+.pourer{display:flex;flex-direction:column;align-items:center;gap:6px;align-self:center}
+.pcup{width:64px;height:84px;border:3px solid var(--muted);border-top:0;border-radius:0 0 12px 12px;position:relative;overflow:hidden;transition:transform .2s ease}
+.pcup.tip{transform:rotate(55deg) translate(14px,-10px)}
+.pfill{position:absolute;left:0;right:0;bottom:0;height:80%;background:linear-gradient(var(--water-hi),var(--water))}
+.plabel{font-family:var(--f-display);font-weight:800;font-size:1.2rem}
+.pname{font-size:.85rem;color:var(--muted);text-align:center}
+.vesselcol{display:flex;flex-direction:column;align-items:center;gap:6px}
+.vessel{position:relative;width:min(190px,100%);height:250px;border:4px solid var(--muted);border-top:0;border-radius:0 0 22px 22px;background:var(--card)}
+.liquid{position:absolute;left:0;right:0;bottom:0;height:0;background:linear-gradient(var(--water-hi),var(--water));border-radius:0 0 18px 18px;transition:height .18s ease-out}
+.liquid.over{background:linear-gradient(var(--bad-bg),var(--bad))}
+.mark{position:absolute;right:-4px;left:58%;border-top:2px solid var(--muted);font-size:.78rem;font-weight:700;color:var(--muted);text-align:right;padding-right:6px;z-index:2}
+.mark.full{left:0;border-top:2px dashed var(--brass);color:var(--brass)}
+.spill{position:absolute;left:100%;bottom:60%;font-size:1.4rem;opacity:0;transition:opacity .2s}
+.spill.on{opacity:1}
+.vname{font-weight:700;text-align:center}
+.jcount{grid-column:1/-1;text-align:center;font-family:var(--f-display);font-weight:800;font-size:1.4rem;min-height:1.6em;font-variant-numeric:tabular-nums}
+
+details.teach{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 16px}
+details.teach summary{font-weight:700;cursor:pointer}
+details.teach ul{margin:.5em 0;padding-left:1.2em}
+footer{color:var(--muted);font-size:.85rem;text-align:center}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+        <rect x="30" y="12" width="4" height="42" rx="2" fill="var(--brass)"/>
+        <rect x="18" y="52" width="28" height="6" rx="3" fill="var(--brass-lo)"/>
+        <rect x="6" y="14" width="52" height="4" rx="2" fill="var(--brass)" transform="rotate(-8 32 16)"/>
+        <path d="M8 18 L2 38 H18 Z" fill="none" stroke="var(--brass-lo)" stroke-width="1.5"/>
+        <path d="M56 13 L48 34 H64 Z" fill="none" stroke="var(--brass-lo)" stroke-width="1.5"/>
+        <path d="M1 38 h18 a9 4 0 0 1 -18 0z" fill="var(--brass-hi)"/>
+        <path d="M47 34 h18 a9 4 0 0 1 -18 0z" fill="var(--brass-hi)"/>
+        <circle cx="32" cy="16" r="4" fill="var(--brass-hi)" stroke="var(--brass-lo)"/>
+      </svg>
+      <div>
+        <h1>Weigh It, <span>Pour It!</span></h1>
+        <p>Class 4 Maths · Chapter 8 · Pan balance games</p>
+      </div>
+    </div>
+    <div class="hud">
+      <div class="pill" title="Stars earned"><span class="star">★</span><span id="stars">0</span></div>
+      <button class="iconbtn" id="soundBtn" aria-pressed="true">Sound on</button>
+    </div>
+  </header>
+
+  <nav class="modes" id="modes" aria-label="Choose a game"></nav>
+
+  <main>
+    <section class="panel" aria-live="polite">
+      <div class="prog"><span id="roundTxt"></span><div class="dots" id="dots"></div></div>
+      <p class="who" id="who"></p>
+      <h2 id="q"></h2>
+      <p id="sub"></p>
+      <div class="ctrl" id="ctrl"></div>
+      <div class="fb" id="fb" hidden></div>
+      <button class="btn primary" id="nextBtn" hidden>Next ▸</button>
+    </section>
+
+    <section class="stagewrap">
+      <div class="balance" id="bal">
+        <span class="tag" id="tag" hidden></span>
+        <div class="dial"></div>
+        <div class="needle" id="needle"></div>
+        <div class="post"></div>
+        <div class="base"></div>
+        <div class="beam" id="beam"></div>
+        <div class="pivot" id="pivot"></div>
+        <div class="pan" id="panL"><svg class="str" viewBox="0 0 100 100" preserveAspectRatio="none"><line x1="50" y1="0" x2="3" y2="100"/><line x1="50" y1="0" x2="97" y2="100"/></svg><div class="load" id="loadL"></div><div class="dish"></div><span class="wlabel" id="wL" hidden></span></div>
+        <div class="pan" id="panR"><svg class="str" viewBox="0 0 100 100" preserveAspectRatio="none"><line x1="50" y1="0" x2="3" y2="100"/><line x1="50" y1="0" x2="97" y2="100"/></svg><div class="load" id="loadR"></div><div class="dish"></div><span class="wlabel" id="wR" hidden></span></div>
+      </div>
+      <div class="jugstage" id="jug" hidden>
+        <div class="pourer"><div class="pcup" id="pcup"><div class="pfill"></div></div><span class="plabel" id="pLabel"></span><span class="pname" id="pName"></span></div>
+        <div class="vesselcol"><div class="vessel" id="vessel"><div class="liquid" id="liquid"></div><span class="spill" id="spill">💧💧</span></div><span class="vname" id="vName"></span></div>
+        <div class="jcount" id="jcount"></div>
+      </div>
+      <div class="trayrow" id="tray" hidden></div>
+    </section>
+  </main>
+
+  <details class="teach">
+    <summary>For teachers: how to use this in class</summary>
+    <ul>
+      <li><b>Tilt Detective</b>: compare weights and predict the tilt. Children say their prediction aloud before tapping.</li>
+      <li><b>Balance It!</b>: repeated addition and multiplication (5 × 10 g = 50 g). Ask “How many?” before anyone taps.</li>
+      <li><b>Sweet Shop</b>: Mr Shrinathan’s kaju katli and 1 kg packets. Division as equal sharing; ½ kg and ¼ kg.</li>
+      <li><b>Guess the Weight</b>: ordering heaviest to lightest, the estimate table from the book, and choosing kg or g.</li>
+      <li><b>Pour It</b>: capacity in L and ml with Mr Krishna’s perfumed oil, dosing cups and droppers.</li>
+    </ul>
+    Weights of animals, fruits and vegetables are estimates. Follow up with a real pan balance and 1 kg, 500 g and 100 g weights, as the textbook suggests.
+  </details>
+  <footer>Based on NCERT Maths Mela, Class 4, Chapter 8 “Weigh It, Pour It”. 1000 g = 1 kg · 1000 ml = 1 L</footer>
+</div>
+
+<script>
+(function(){
+const $ = id => document.getElementById(id);
+const reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- objects from the chapter (g = grams, ml for liquids) ---------- */
+const I = {
+  elephant:{n:'Elephant',hi:'हाथी',g:4000000,e:'🐘',sz:'lg'},
+  tiger:{n:'Tiger',hi:'बाघ',g:200000,e:'🐅',sz:'lg'},
+  cat:{n:'Cat',hi:'बिल्ली',g:4000,e:'🐈'},
+  chair:{n:'Wooden chair',hi:'लकड़ी की कुर्सी',g:8000,e:'🪑'},
+  cyl:{n:'Empty gas cylinder',hi:'खाली गैस सिलेंडर',g:15000,s:'cyl',lbl:'GAS',c:'#C8322A',t:'#fff'},
+  bottle:{n:'1 litre filled bottle',hi:'1 लीटर भरी बोतल',g:1000,s:'btl',lbl:'1 L',c:'#5FA8E6',t:'#0d2b45'},
+  pen:{n:'Pen',hi:'पेन',g:12,e:'🖊️',sz:'sm'},
+  leaf:{n:'Leaf',hi:'पत्ती',g:3,e:'🍃',sz:'sm'},
+  bag:{n:'School bag',hi:'बस्ता',g:3000,e:'🎒'},
+  book:{n:'Maths book',hi:'गणित की किताब',g:300,e:'📘'},
+  bananas:{n:'6 Bananas',hi:'6 केले',g:900,e:'🍌'},
+  potatoes:{n:'5 Potatoes',hi:'5 आलू',g:750,e:'🥔'},
+  tomatoes:{n:'10 Tomatoes',hi:'10 टमाटर',g:800,e:'🍅'},
+  onions:{n:'15 Onions',hi:'15 प्याज़',g:1500,e:'🧅'},
+  pumpkin:{n:'Half pumpkin',hi:'आधा कद्दू',g:2000,e:'🎃'},
+  watermelon:{n:'Watermelon',hi:'तरबूज़',g:3000,e:'🍉'},
+  ring:{n:'Gold ring',hi:'अंगूठी',g:5,e:'💍',sz:'sm'},
+  pencil:{n:'Pencil',hi:'पेंसिल',g:8,e:'✏️',sz:'sm'},
+  chilli:{n:'Green chilli',hi:'हरी मिर्च',g:5,e:'🌶️',sz:'sm'},
+  child:{n:'You!',hi:'आप',g:28000,e:'🧒'},
+  mirabai:{n:'Mirabai Chanu’s lift',hi:'मीराबाई चानू',g:202000,s:'bar',lbl:'',c:'transparent',t:'#000'},
+  salt:{n:'Salt packet 1 kg',hi:'नमक',g:1000,s:'pkt',lbl:'SALT',sub:'1 kg',c:'#2F6FB5',t:'#fff'},
+  atta:{n:'Atta packet 5 kg',hi:'आटा',g:5000,s:'sack',lbl:'ATTA',sub:'5 kg',c:'#E4C79A',t:'#4a3216'},
+  dal500:{n:'Dal packet 500 g',hi:'दाल',g:500,s:'pkt',lbl:'DAL',sub:'500 g',c:'#E2A322',t:'#3b2705'},
+  dal250:{n:'Dal packet 250 g',hi:'दाल',g:250,s:'pkt',lbl:'DAL',sub:'250 g',c:'#F0C24B',t:'#3b2705',sz:'sm'},
+  dal100:{n:'Dal packet 100 g',hi:'दाल',g:100,s:'pkt',lbl:'DAL',sub:'100 g',c:'#F6D77F',t:'#3b2705',sz:'sm'},
+  haldi:{n:'Haldi packet 50 g',hi:'हल्दी',g:50,s:'pkt',lbl:'HALDI',sub:'50 g',c:'#F4C400',t:'#4a3000',sz:'sm'},
+  soap:{n:'Soap bar 100 g',hi:'साबुन',g:100,s:'soap',lbl:'SOAP',sub:'100 g',c:'#55B487',t:'#0c3320'},
+  sugar:{n:'Sugar packet 250 g',hi:'चीनी',g:250,s:'pkt',lbl:'SUGAR',sub:'250 g',c:'#F3F3F0',t:'#2a2a2a'},
+  rice750:{n:'Rice 750 g',hi:'चावल',g:750,s:'pkt',lbl:'RICE',sub:'750 g',c:'#8C5B3C',t:'#fff'},
+  eraser:{n:'Eraser 10 g',hi:'रबड़',g:10,s:'eraser',lbl:'10 g',c:'transparent',t:'#fff',sz:'sm'},
+  w1kg:{n:'1 kg weight',hi:'बाट',g:1000,s:'wt',lbl:'1 kg',c:'#333',t:'#fff'},
+  w500:{n:'500 g weight',hi:'बाट',g:500,s:'wt',lbl:'500 g',c:'#333',t:'#fff',sz:'sm'},
+  w250:{n:'250 g weight',hi:'बाट',g:250,s:'wt',lbl:'250 g',c:'#333',t:'#fff',sz:'sm'},
+  w100:{n:'100 g weight',hi:'बाट',g:100,s:'wt',lbl:'100 g',c:'#333',t:'#fff',sz:'sm'},
+  w50:{n:'50 g weight',hi:'बाट',g:50,s:'wt',lbl:'50 g',c:'#333',t:'#fff',sz:'sm'},
+  kaju:{n:'Kaju katli 1 kg',hi:'काजू कतली',g:1000,s:'tray',lbl:'KAJU KATLI',sub:'1 kg',c:'transparent',t:'#4a3a1a'},
+  box500:{n:'Sweet box 500 g',hi:'मिठाई का डिब्बा',g:500,s:'box',lbl:'500 g',c:'#C2185B',t:'#fff'},
+  box250:{n:'Sweet box 250 g',hi:'मिठाई का डिब्बा',g:250,s:'box',lbl:'250 g',c:'#7B3FA0',t:'#fff',sz:'sm'},
+  box100:{n:'Sweet box 100 g',hi:'मिठाई का डिब्बा',g:100,s:'box',lbl:'100 g',c:'#1E7F74',t:'#fff',sz:'sm'},
+  box50:{n:'Sweet box 50 g',hi:'मिठाई का डिब्बा',g:50,s:'box',lbl:'50 g',c:'#D2581E',t:'#fff',sz:'sm'},
+  sack10:{n:'Rice sack 10 kg',hi:'चावल की बोरी',g:10000,s:'sack',lbl:'RICE',sub:'10 kg',c:'#C9A66B',t:'#3f2a10'},
+  sack20:{n:'Rice sack 20 kg',hi:'चावल की बोरी',g:20000,s:'sack',lbl:'RICE',sub:'20 kg',c:'#C9A66B',t:'#3f2a10'},
+  sack25:{n:'Rice sack 25 kg',hi:'चावल की बोरी',g:25000,s:'sack',lbl:'RICE',sub:'25 kg',c:'#C9A66B',t:'#3f2a10'},
+  sack50:{n:'Rice sack 50 kg',hi:'चावल की बोरी',g:50000,s:'sack',lbl:'RICE',sub:'50 kg',c:'#B8925A',t:'#3f2a10',sz:'lg'},
+  pk1kg:{n:'Rice packet 1 kg',hi:'चावल',g:1000,s:'pkt',lbl:'RICE',sub:'1 kg',c:'#E8E1CF',t:'#3f2a10',sz:'sm'},
+};
+
+/* ---------- helpers ---------- */
+function fmtG(g){
+  if(g>=1000){const kg=Math.floor(g/1000), r=g%1000; return r?`${kg} kg ${r} g`:`${kg.toLocaleString('en-IN')} kg`;}
+  return `${g} g`;
+}
+function fmtML(ml){
+  if(ml>=1000){const l=Math.floor(ml/1000), r=ml%1000; return r?`${l} L ${r} ml`:`${l} L`;}
+  return `${ml} ml`;
+}
+const weigh = groups => groups.reduce((a,[k,n])=>a+I[k].g*n,0);
+const shuffle = a => {a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function describe(groups){return groups.map(([k,n])=>n>1?`${n} × ${I[k].n}`:I[k].n).join(' + ');}
+
+function itemHTML(k,o={}){
+  const it=I[k];
+  let inner;
+  if(it.e) inner=`<span class="emo" aria-hidden="true">${it.e}</span>`;
+  else inner=`<span class="shp s-${it.s}" style="--c:${it.c};--t:${it.t}" aria-hidden="true"><b>${esc(it.lbl)}</b>${it.sub?`<i>${esc(it.sub)}</i>`:''}</span>`;
+  const cap = (o.caption && (it.e || it.s==='bar' || it.s==='cyl' || it.s==='btl')) ? `<span class="cap">${esc(it.n)}</span>` : '';
+  const badge = o.n>1 ? `<span class="badge">×${o.n}</span>` : '';
+  return `<span class="item${it.sz?' '+it.sz:''}" data-k="${k}" title="${esc(it.n)} (${esc(it.hi)})">${inner}${badge}${cap}</span>`;
+}
+
+/* ---------- sound ---------- */
+let soundOn=true, actx=null;
+function beep(freqs,dur=0.12,type='triangle'){
+  if(!soundOn) return;
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    let t=actx.currentTime;
+    freqs.forEach(f=>{
+      const o=actx.createOscillator(), g=actx.createGain();
+      o.type=type;o.frequency.value=f;g.gain.setValueAtTime(.18,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);
+      o.connect(g).connect(actx.destination);o.start(t);o.stop(t+dur);t+=dur*.8;
+    });
+  }catch(e){}
+}
+const sfx={ok:()=>beep([523,659,784],.14), no:()=>beep([220,180],.18,'sawtooth'), clink:()=>beep([1320],.06,'square'), pour:()=>beep([440+Math.random()*80],.05,'sine')};
+
+/* ---------- the balance ---------- */
+const bal=$('bal'), beam=$('beam'), pivot=$('pivot'), needle=$('needle'), panL=$('panL'), panR=$('panR');
+const B={theta:0,target:0,vel:0,raf:0,L:[],R:[]};
+function layout(){
+  const W=bal.clientWidth; if(!W) return;
+  const H=Math.round(W*0.64);
+  bal.style.height=H+'px';
+  bal.style.fontSize=Math.max(9,W/560*16)+'px';
+  const px=W/2, py=H*0.17, arm=W*0.31, r=B.theta*Math.PI/180;
+  beam.style.width=(2*arm)+'px';
+  beam.style.transform=`translate(${px-arm}px,${py}px) translateY(-50%) rotate(${B.theta}deg)`;
+  pivot.style.left=px+'px';pivot.style.top=py+'px';
+  needle.style.left=(px-needle.offsetWidth/2)+'px';needle.style.top=(py-needle.offsetHeight)+'px';
+  needle.style.transform=`rotate(${B.theta}deg)`;
+  const lx=px-arm*Math.cos(r), ly=py-arm*Math.sin(r), rx=px+arm*Math.cos(r), ry=py+arm*Math.sin(r);
+  panL.style.transform=`translate(${lx-panL.offsetWidth/2}px,${ly}px)`;
+  panR.style.transform=`translate(${rx-panR.offsetWidth/2}px,${ry}px)`;
+}
+function tick(){
+  B.vel=(B.vel+(B.target-B.theta)*0.05)*0.84;
+  B.theta+=B.vel;
+  if(Math.abs(B.target-B.theta)<0.02 && Math.abs(B.vel)<0.02){B.theta=B.target;B.vel=0;B.raf=0;layout();return;}
+  layout();B.raf=requestAnimationFrame(tick);
+}
+function tiltFor(L,R){
+  const wl=weigh(L), wr=weigh(R);
+  if(wl===wr) return 0;
+  const m=Math.max(wl,wr), d=Math.abs(wr-wl)/m;
+  return 12*Math.sign(wr-wl)*Math.min(1,Math.max(0.4,d*3));
+}
+function setTilt(t){
+  B.target=t;
+  if(reduceMotion){B.theta=t;layout();return;}
+  if(!B.raf) B.raf=requestAnimationFrame(tick);
+}
+function renderLoad(el,groups){
+  const total=groups.reduce((a,[,n])=>a+n,0);
+  const expand=total<=12;
+  let h='';
+  for(const [k,n] of groups){
+    if(!n) continue;
+    if(expand) for(let i=0;i<n;i++) h+=itemHTML(k,{caption:total<=2});
+    else h+=itemHTML(k,{n,caption:false});
+  }
+  el.innerHTML=h;
+  el.classList.toggle('crowd',total>3&&total<=6);
+  el.classList.toggle('packed',total>6);
+}
+function showWeights(on){
+  $('wL').hidden=$('wR').hidden=!on;
+  $('wL').textContent=fmtG(weigh(B.L));$('wR').textContent=fmtG(weigh(B.R));
+}
+function setPans(L,R,{tilt=true,weights=false,held=false}={}){
+  B.L=L;B.R=R;
+  renderLoad($('loadL'),L);renderLoad($('loadR'),R);
+  showWeights(weights);
+  setHeld(held);
+  setTilt(tilt&&!held?tiltFor(L,R):0);
+}
+function setHeld(on,text){
+  const tag=$('tag');
+  tag.hidden=!on&&!text;
+  tag.className='tag'+(on?' held':'');
+  tag.textContent=text||(on?'Held still — make your guess':'');
+}
+new ResizeObserver(layout).observe(bal);
+
+/* ---------- jug (Pour It) ---------- */
+function setupJug(r){
+  $('pLabel').textContent=fmtML(r.size);
+  $('pName').textContent=r.pname;
+  $('vName').textContent=r.vname;
+  const v=$('vessel');
+  v.querySelectorAll('.mark').forEach(m=>m.remove());
+  // the full line sits at 82% of the vessel's height
+  const fracs=r.target>=1000?[.25,.5,.75]:[.5];
+  fracs.forEach(f=>{const m=document.createElement('span');m.className='mark';m.style.bottom=(f*82)+'%';m.textContent=fmtML(Math.round(r.target*f));v.appendChild(m);});
+  const full=document.createElement('span');full.className='mark full';full.style.bottom='82%';full.textContent='Full: '+fmtML(r.target);v.appendChild(full);
+  fillJug(0,r);$('jcount').textContent='';
+}
+function fillJug(vol,r){
+  const liq=$('liquid');
+  liq.style.height=Math.min(100,vol/r.target*82)+'%';
+  liq.classList.toggle('over',vol>r.target);
+  $('spill').classList.toggle('on',vol>r.target);
+}
+let pourTimer=0;
+function pour(n,r,done){
+  clearTimeout(pourTimer);
+  let i=0;const step=Math.max(40,Math.min(320,1600/Math.max(n,1)));
+  const cup=$('pcup');
+  fillJug(0,r);
+  (function go(){
+    if(i>=n){cup.classList.remove('tip');done();return;}
+    i++;cup.classList.add('tip');sfx.pour();
+    fillJug(i*r.size,r);
+    $('jcount').textContent=`${i} × ${fmtML(r.size)} = ${fmtML(i*r.size)}`;
+    pourTimer=setTimeout(go,reduceMotion?0:step);
+  })();
+}
+
+/* ---------- rounds ---------- */
+const TILT=[
+  {L:[['elephant',1]],R:[['cat',1]],note:'An elephant weighs more than 1000 kg. A cat weighs only 3 kg to 5 kg.'},
+  {L:[['leaf',1]],R:[['pen',1]],note:'A leaf weighs 1 g to 5 g. A pen weighs 10 g to 15 g.'},
+  {L:[['chair',1]],R:[['cyl',1]],note:'Even an empty gas cylinder weighs about 15 kg. A wooden chair weighs 6 kg to 10 kg.'},
+  {L:[['w1kg',1]],R:[['bananas',1]],note:'6 bananas weigh a little less than 1 kg.'},
+  {L:[['onions',1]],R:[['w1kg',1]],note:'15 onions weigh more than 1 kg.'},
+  {L:[['dal500',1]],R:[['dal250',2]],note:'250 g + 250 g = 500 g. So 2 packets of 250 g balance 500 g.'},
+  {L:[['salt',1]],R:[['dal250',4]],note:'4 × 250 g = 1000 g = 1 kg.'},
+  {L:[['eraser',10]],R:[['soap',1]],note:'10 × 10 g = 100 g. 10 erasers balance a 100 g soap bar.'},
+  {L:[['pumpkin',1]],R:[['w1kg',1]],note:'Half a pumpkin is still more than 1 kg.'},
+  {L:[['potatoes',1]],R:[['w1kg',1]],note:'5 potatoes weigh less than 1 kg.'},
+  {L:[['bag',1]],R:[['book',1]],note:'The whole bag (with all the books) is heavier than one book.'},
+  {L:[['dal250',3]],R:[['dal500',1]],note:'3 × 250 g = 750 g, which is more than 500 g.'},
+  {L:[['w1kg',1]],R:[['w100',10]],note:'10 × 100 g = 1000 g = 1 kg.'},
+  {L:[['bottle',1]],R:[['w1kg',1]],note:'1 litre of water weighs about 1 kg.'},
+  {L:[['haldi',1]],R:[['eraser',4]],note:'4 × 10 g = 40 g. The 50 g haldi packet is heavier.'},
+  {L:[['tiger',1]],R:[['mirabai',1]],note:'Mirabai Chanu lifted a total of 202 kg at the Tokyo Olympics. A tiger weighs 150 kg to 300 kg, so this one is a close match!'},
+  {L:[['tomatoes',1]],R:[['w1kg',1]],note:'10 tomatoes weigh a little less than 1 kg.'},
+];
+// Mirabai’s lift vs tiger: use the exact book fact (202 kg) against a 200 kg tiger.
+
+const BUILD=[
+  {L:[['haldi',1]],tray:['eraser'],q:'How many erasers weigh the same as a 50 g Haldi packet?',ans:5},
+  {L:[['soap',1]],tray:['eraser'],q:'A 100 g soap bar will weigh the same as how many erasers?',ans:10},
+  {L:[['sugar',1]],tray:['eraser'],five:true,q:'How many erasers will weigh the same as 250 g sugar?',ans:25},
+  {L:[['dal500',1]],tray:['dal250'],q:'How many 250 g dal packets will balance one 500 g dal packet?',ans:2},
+  {L:[['salt',1]],tray:['dal100'],q:'How many 100 g packets make 1 kg?',ans:10},
+  {L:[['salt',1]],tray:['w500','w250','w100','w50'],q:'Balance the 1 kg salt packet using any weights.'},
+  {L:[['rice750',1]],tray:['w500','w250','w100','w50'],q:'Balance 750 g of rice. Try to use as few weights as you can.'},
+  {L:[['atta',1]],tray:['w1kg','w500'],q:'Balance the 5 kg atta bag.'},
+];
+
+const SHOP=[
+  {type:'num',who:'Mr Das',L:[['kaju',1]],unit:'box500',q:'Mr Das wants 1 kg kaju katli in boxes of 500 g each. How many boxes?'},
+  {type:'num',who:'Mrs Fernandes',L:[['kaju',1]],unit:'box250',q:'Mrs Fernandes wants 1 kg kaju katli in boxes of 250 g each. How many boxes?'},
+  {type:'num',who:'Mrs Khan',L:[['kaju',1]],unit:'box100',q:'Mrs Khan wants 1 kg kaju katli in boxes of 100 g each. How many boxes?'},
+  {type:'num',who:'Mr Patel',L:[['kaju',1]],unit:'box50',q:'Mr Patel wants 1 kg kaju katli in boxes of 50 g each. How many boxes?'},
+  {type:'choice',who:'Kilo fractions',L:[['w1kg',1]],R:[['dal500',2]],q:'2 packets of 500 g = 1 kg. So 500 g = ___ kg',opts:['½','¼','1⁄10'],ans:0},
+  {type:'choice',who:'Kilo fractions',L:[['w1kg',1]],R:[['dal250',4]],q:'4 packets of 250 g = 1 kg. So 250 g = ___ kg',opts:['½','¼','1⁄10'],ans:1},
+  {type:'num',who:'Ration shop',L:[['sack10',1]],unit:'pk1kg',q:'How many 1 kg packets are in a 10 kg sack?'},
+  {type:'num',who:'Ration shop',L:[['sack20',1]],unit:'pk1kg',q:'How many 1 kg packets are in a 20 kg sack?'},
+  {type:'num',who:'Ration shop',L:[['sack25',1]],unit:'pk1kg',q:'How many 1 kg packets are in a 25 kg sack?'},
+  {type:'num',who:'Ration shop',L:[['sack50',1]],unit:'pk1kg',q:'How many 1 kg packets are in a 50 kg sack?'},
+];
+
+const withArticle = n => (/^[aeiou]/.test(n)?'an ':'a ')+n;
+const RANGES=['1 g to 5 g','10 g to 15 g','800 g to 1000 g','3 kg to 5 kg','6 kg to 10 kg','15 kg','150 kg to 300 kg','More than 1000 kg'];
+const RANGE_OF={leaf:0,pen:1,bottle:2,cat:3,chair:4,cyl:5,tiger:6,elephant:7};
+function rangeRound(k){
+  const right=RANGES[RANGE_OF[k]];
+  const others=shuffle(RANGES.filter(x=>x!==right)).slice(0,2);
+  const opts=shuffle([right,...others]);
+  return {type:'range',k,q:`About how much does ${withArticle(I[k].n.toLowerCase())} weigh?`,opts,ans:opts.indexOf(right)};
+}
+function guessRounds(){
+  const order=[
+    {type:'order',keys:shuffle(['elephant','tiger','cat','leaf'])},
+    {type:'order',keys:shuffle(['cyl','chair','bottle','pen'])},
+    {type:'order',keys:shuffle(['onions','bananas','potatoes','haldi'])},
+  ];
+  const ranges=shuffle(Object.keys(RANGE_OF)).slice(0,4).map(rangeRound);
+  const units=shuffle([['watermelon','kg'],['ring','g'],['sack25','kg'],['pencil','g'],['chilli','g'],['child','kg']]).slice(0,3)
+    .map(([k,u])=>({type:'unit',k,q:`Which unit is better for weighing ${k==='child'?'yourself':(k==='ring'?'a gold ring':k==='sack25'?'a rice sack':'a '+I[k].n.toLowerCase())}?`,opts:['Kilograms (kg)','Grams (g)'],ans:u==='kg'?0:1}));
+  return [order[0],ranges[0],units[0],order[1],ranges[1],units[1],ranges[2],order[2],units[2],ranges[3]];
+}
+
+const POUR=[
+  {who:'Ms Shetty',size:500,target:1000,pname:'500 ml bottle',vname:'1 L perfumed oil',q:'Mr Krishna has 1 L of perfumed oil. Ms Shetty wants bottles of 500 ml each. How many bottles will she get?'},
+  {who:'Mr Muthukumar',size:200,target:1000,pname:'200 ml bottle',vname:'1 L perfumed oil',q:'Mr Muthukumar wants the 1 L of oil in bottles of 200 ml each. How many bottles?'},
+  {who:'Ms Naini',size:100,target:1000,pname:'100 ml bottle',vname:'1 L perfumed oil',q:'Ms Naini wants the 1 L of oil in bottles of 100 ml each. How many bottles?'},
+  {who:'Ms Kannan',size:50,target:1000,pname:'50 ml bottle',vname:'1 L perfumed oil',q:'Ms Kannan wants the 1 L of oil in bottles of 50 ml each. How many bottles?'},
+  {who:'Dosing cup',size:10,target:100,pname:'10 ml dosing cup',vname:'100 ml bottle',q:'How many 10 ml dosing cups will fill a 100 ml bottle?'},
+  {who:'Dosing cup',size:10,target:250,pname:'10 ml dosing cup',vname:'250 ml glass',q:'How many 10 ml dosing cups will fill a 250 ml glass?'},
+  {who:'Dropper',size:1,target:10,pname:'1 ml dropper',vname:'10 ml dosing cup',q:'How many 1 ml droppers will fill a 10 ml dosing cup?'},
+  {who:'Milk cans',size:250,target:500,pname:'250 ml can',vname:'½ L of milk',q:'How many 250 ml are there in ½ L?'},
+  {who:'Milk cans',size:250,target:750,pname:'250 ml can',vname:'750 ml of milk',q:'How many 250 ml are there in 750 ml?'},
+  {who:'Milk cans',size:100,target:800,pname:'100 ml can',vname:'800 ml of milk',q:'How many 100 ml are there in 800 ml?'},
+];
+
+const MODES=[
+  {id:'tilt',t:'Tilt Detective',d:'Which side goes down?',stage:'bal',make:()=>shuffle(TILT).slice(0,8)},
+  {id:'build',t:'Balance It!',d:'Add weights till it balances',stage:'bal',make:()=>BUILD.slice()},
+  {id:'shop',t:'Sweet Shop',d:'Boxes, packets and ½ kg',stage:'bal',make:()=>SHOP.slice()},
+  {id:'guess',t:'Guess the Weight',d:'Order, estimate, kg or g',stage:'bal',make:guessRounds},
+  {id:'pour',t:'Pour It',d:'Litres and millilitres',stage:'jug',make:()=>POUR.slice()},
+];
+
+/* ---------- game state ---------- */
+const S={m:0,rounds:[],i:0,res:[],tries:0,best:{}};
+try{S.best=JSON.parse(localStorage.getItem('wipi-best')||'{}')||{};}catch(e){S.best={};}
+function saveBest(){try{localStorage.setItem('wipi-best',JSON.stringify(S.best));}catch(e){}}
+function totalStars(){return Object.values(S.best).reduce((a,b)=>a+b,0);}
+
+function renderModes(){
+  $('modes').innerHTML=MODES.map((m,i)=>`<button class="mode" data-m="${i}" aria-pressed="${i===S.m}"><span class="n">Game ${i+1}</span><span class="t">${m.t}</span><span class="d">${m.d}</span><span class="got">${S.best[m.id]!=null?'Best: '+S.best[m.id]+' ★':''}</span></button>`).join('');
+  $('stars').textContent=totalStars();
+}
+$('modes').addEventListener('click',e=>{const b=e.target.closest('.mode');if(b) startMode(+b.dataset.m);});
+$('soundBtn').addEventListener('click',()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'Sound on':'Sound off';$('soundBtn').setAttribute('aria-pressed',soundOn);});
+$('nextBtn').addEventListener('click',()=>{S.i++;renderRound();});
+
+function startMode(m){
+  S.m=m;S.rounds=MODES[m].make();S.i=0;S.res=[];
+  renderModes();
+  const jug=MODES[m].stage==='jug';
+  bal.hidden=jug;$('jug').hidden=!jug;
+  if(!jug) requestAnimationFrame(layout);
+  renderRound();
+}
+function dots(){
+  $('dots').innerHTML=S.rounds.map((_,i)=>`<i class="${S.res[i]===true?'ok':S.res[i]===false?'no':''}${i===S.i?' now':''}"></i>`).join('');
+  $('roundTxt').textContent=S.i<S.rounds.length?`Round ${S.i+1} of ${S.rounds.length}`:'Finished';
+}
+function feedback(good,html){const f=$('fb');f.hidden=false;f.className='fb '+(good?'good':'bad');f.innerHTML=html;}
+function clearUI(){
+  $('fb').hidden=true;$('nextBtn').hidden=true;$('tray').hidden=true;$('tray').innerHTML='';
+  $('who').textContent='';$('sub').innerHTML='';$('ctrl').innerHTML='';
+  panR.classList.remove('click');
+  $('ctrl').onclick=null;$('loadR').onclick=null;$('tray').onclick=null;
+  setHeld(false);
+}
+function finishRound(ok){
+  if(S.res[S.i]===undefined) S.res[S.i]=ok;
+  dots();
+  $('nextBtn').hidden=false;
+  $('nextBtn').textContent=S.i===S.rounds.length-1?'See my score ▸':'Next ▸';
+  $('nextBtn').focus({preventScroll:true});
+}
+function renderRound(){
+  clearUI();
+  dots();
+  if(S.i>=S.rounds.length) return renderSummary();
+  const r=S.rounds[S.i], id=MODES[S.m].id;
+  ({tilt:roundTilt,build:roundBuild,shop:roundShop,guess:roundGuess,pour:roundPour})[id](r);
+}
+
+/* Game 1: Tilt Detective */
+function roundTilt(r){
+  $('who').textContent='Predict';
+  $('q').textContent='Which side will go down?';
+  $('sub').innerHTML=`Left pan: <b>${esc(describe(r.L))}</b><br>Right pan: <b>${esc(describe(r.R))}</b>`;
+  setPans(r.L,r.R,{held:true});
+  const wl=weigh(r.L), wr=weigh(r.R), truth=wl>wr?0:wl===wr?1:2;
+  const labels=['◀ Left goes down','They balance','Right goes down ▶'];
+  $('ctrl').innerHTML=`<div class="choices">${labels.map((l,i)=>`<button class="btn" data-a="${i}">${l}</button>`).join('')}</div>`;
+  $('ctrl').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+    const a=+b.dataset.a, ok=a===truth;
+    $('ctrl').querySelectorAll('button').forEach(x=>{x.disabled=true;if(+x.dataset.a===truth)x.classList.add('right');});
+    if(!ok) b.classList.add('wrong');
+    setPans(r.L,r.R,{weights:true});
+    (ok?sfx.ok:sfx.no)();
+    const head=ok?'Correct!':'Not quite.';
+    const res=truth===1?'The pans balance.':`The ${truth===0?'left':'right'} side goes down because it is heavier.`;
+    feedback(ok,`${head} ${res}<small>${esc(r.note)}</small>`);
+    finishRound(ok);
+  }));
+}
+
+/* Game 2: Balance It! */
+function sentence(groups){
+  const parts=groups.filter(([,n])=>n).map(([k,n])=>n>1?`${n} × ${fmtG(I[k].g)}`:fmtG(I[k].g));
+  return `${parts.join(' + ')} = ${fmtG(weigh(groups))}`;
+}
+function roundBuild(r){
+  $('who').textContent='Build it';
+  $('q').textContent=r.q;
+  $('sub').innerHTML='Tap a weight below to put it on the right pan. Tap something on the pan to take it off.';
+  const R=r.tray.map(k=>[k,0]);
+  let solved=false;
+  panR.classList.add('click');
+  const tray=$('tray');tray.hidden=false;
+  tray.innerHTML=`<span class="lbl">Weights to use</span>`+r.tray.map(k=>
+    `<button class="tbtn" data-k="${k}" data-n="1" aria-label="Add one ${esc(I[k].n)}">${itemHTML(k)}<span class="add">+1</span></button>`+
+    (r.five?`<button class="tbtn" data-k="${k}" data-n="5" aria-label="Add five ${esc(I[k].n)}">${itemHTML(k,{n:5})}<span class="add">+5</span></button>`:'')
+  ).join('')+`<button class="tbtn" data-clear="1"><span class="emo" aria-hidden="true">↺</span><span class="add">Clear pan</span></button>`;
+  $('ctrl').innerHTML=`<div class="fb" style="background:var(--chip);color:var(--ink)">Right pan: <b id="cnt">nothing yet</b></div>`;
+  function update(){
+    setPans(r.L,R,{weights:true});
+    const parts=R.filter(([,n])=>n).map(([k,n])=>`${n} × ${I[k].n}`);
+    $('cnt').textContent=parts.length?parts.join(', '):'nothing yet';
+    if(solved) return;
+    const wl=weigh(r.L), wr=weigh(R);
+    if(wr===wl){
+      solved=true;sfx.ok();
+      const count=R.reduce((a,[,n])=>a+n,0);
+      let msg='Balanced!';
+      if(r.ans) msg+=` <b>${r.ans}</b> ${I[r.tray[0]].n.replace(/ \d.*$/,'').toLowerCase()}${r.ans>1?'s':''} balance ${I[r.L[0][0]].n.toLowerCase()}.`;
+      else msg+=` You used ${count} weight${count>1?'s':''}.`;
+      feedback(true,`${msg}<span class="eq">${sentence(R)}</span>`);
+      panR.classList.remove('click');tray.querySelectorAll('button').forEach(b=>b.disabled=true);
+      finishRound(true);
+    } else if(wr>wl){
+      $('fb').hidden=false;$('fb').className='fb bad';$('fb').innerHTML='Too heavy! The right side went down. Tap an item on the pan to take it off.';
+    } else $('fb').hidden=true;
+  }
+  tray.onclick=e=>{
+    const b=e.target.closest('button');if(!b||solved) return;
+    if(b.dataset.clear){R.forEach(g=>g[1]=0);}
+    else{const g=R.find(x=>x[0]===b.dataset.k);g[1]+=+b.dataset.n;sfx.clink();}
+    update();
+  };
+  $('loadR').onclick=e=>{
+    const it=e.target.closest('.item');if(!it||solved) return;
+    const g=R.find(x=>x[0]===it.dataset.k);if(g&&g[1]>0){g[1]--;sfx.clink();update();}
+  };
+  update();
+}
+
+/* number entry shared by Sweet Shop and Pour It */
+function numberInput(onCheck){
+  $('ctrl').innerHTML=`<div class="numrow"><div class="stepper"><button type="button" data-d="-1" aria-label="One less">−</button><input id="num" type="number" inputmode="numeric" min="0" max="200" value="1" aria-label="Your answer"><button type="button" data-d="1" aria-label="One more">+</button></div><button class="btn primary" id="check">Check</button></div>`;
+  const inp=$('num');
+  $('ctrl').querySelectorAll('[data-d]').forEach(b=>b.addEventListener('click',()=>{inp.value=Math.max(0,Math.min(200,(+inp.value||0)+ +b.dataset.d));}));
+  const go=()=>{const v=Math.max(0,Math.min(200,Math.round(+inp.value||0)));inp.value=v;onCheck(v);};
+  $('check').addEventListener('click',go);
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')go();});
+}
+function lockNumber(){ $('ctrl').querySelectorAll('button,input').forEach(x=>x.disabled=true); }
+
+/* Game 3: Sweet Shop */
+function roundShop(r){
+  $('who').textContent=r.who;
+  $('q').textContent=r.q;
+  if(r.type==='choice'){
+    $('sub').textContent='Look at the balance.';
+    setPans(r.L,r.R,{weights:true});
+    return choiceButtons(r.opts,r.ans,ok=>{
+      feedback(ok,ok?`Yes! <span class="eq">${r.q.replace('___',r.opts[r.ans])}</span>`:`Look again: ${esc(describe(r.R))} balance 1 kg. <span class="eq">${r.q.replace('___',r.opts[r.ans])}</span>`);
+    });
+  }
+  const unit=I[r.unit], need=weigh(r.L)/unit.g;
+  $('sub').innerHTML=`Each ${esc(unit.n.toLowerCase())} holds <b>${fmtG(unit.g)}</b>. Put your answer on the balance to check.`;
+  setPans(r.L,[],{weights:true});
+  S.tries=0;
+  numberInput(v=>{
+    S.tries++;
+    setPans(r.L,[[r.unit,v]],{weights:true});
+    const ok=v===need;
+    if(ok){
+      sfx.ok();lockNumber();
+      feedback(true,`Balanced! ${v} boxes of ${fmtG(unit.g)} make ${fmtG(weigh(r.L))}.<span class="eq">${v} × ${fmtG(unit.g)} = ${fmtG(weigh(r.L))}</span>`);
+      if(S.tries===1) finishRound(true); else {S.res[S.i]=false;finishRound(false);}
+    } else {
+      sfx.no();
+      feedback(false,v<need?`The ${esc(I[r.L[0][0]].n.toLowerCase())} side is still heavier. You need more.`:`Too many! The right side went down. Try fewer.`);
+      if(S.tries>=3){lockNumber();feedback(false,`The answer is ${need}.<span class="eq">${need} × ${fmtG(unit.g)} = ${fmtG(weigh(r.L))}</span>`);setPans(r.L,[[r.unit,need]],{weights:true});finishRound(false);}
+    }
+  });
+}
+
+/* shared multiple-choice */
+function choiceButtons(opts,ans,after){
+  $('ctrl').innerHTML=`<div class="choices">${opts.map((o,i)=>`<button class="btn" data-a="${i}">${esc(o)}</button>`).join('')}</div>`;
+  $('ctrl').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+    const ok=+b.dataset.a===ans;
+    $('ctrl').querySelectorAll('button').forEach(x=>{x.disabled=true;if(+x.dataset.a===ans)x.classList.add('right');});
+    if(!ok)b.classList.add('wrong');
+    (ok?sfx.ok:sfx.no)();
+    after(ok);finishRound(ok);
+  }));
+}
+
+/* Game 4: Guess the Weight */
+const REF={leaf:[['w50',0]],pen:[['eraser',1]],bottle:[['w1kg',1]],cat:[['w1kg',4]],chair:[['w1kg',8]],cyl:[['w1kg',15]],tiger:[['w1kg',200]],elephant:[['w1kg',4000]]};
+function roundGuess(r){
+  if(r.type==='order'){
+    $('who').textContent='Heaviest to lightest';
+    $('q').textContent='Tap from the heaviest to the lightest.';
+    $('sub').textContent='Tap a card again to undo.';
+    setPans([],[]);
+    let picked=[];
+    const sorted=r.keys.slice().sort((a,b)=>I[b].g-I[a].g);
+    const draw=()=>{
+      $('ctrl').innerHTML=`<div class="cards">${r.keys.map(k=>{const p=picked.indexOf(k);return `<button class="card${p>=0?' done':''}" data-k="${k}">${p>=0?`<span class="rank">${p+1}</span>`:''}${itemHTML(k)}<span class="nm">${esc(I[k].n)}<br><span class="hi">${esc(I[k].hi)}</span></span></button>`;}).join('')}</div>`;
+    };
+    draw();
+    $('ctrl').onclick=e=>{
+      const c=e.target.closest('.card');if(!c||$('ctrl').dataset.lock) return;
+      const k=c.dataset.k, p=picked.indexOf(k);
+      if(p>=0) picked=picked.slice(0,p); else {picked.push(k);sfx.clink();}
+      draw();
+      if(picked.length===r.keys.length){
+        const ok=picked.every((k,i)=>k===sorted[i]);
+        $('ctrl').dataset.lock='1';
+        (ok?sfx.ok:sfx.no)();
+        setPans([[sorted[0],1]],[[sorted[3],1]],{weights:true});
+        feedback(ok,(ok?'Correct order!':'Not quite. Here is the right order:')+`<small>${sorted.map(k=>`${esc(I[k].n)} (${fmtG(I[k].g)})`).join(' → ')}</small>`);
+        finishRound(ok);
+      }
+    };
+    delete $('ctrl').dataset.lock;
+    return;
+  }
+  $('ctrl').onclick=null;
+  if(r.type==='range'){
+    $('who').textContent='Estimate';
+    $('q').textContent=r.q;
+    $('sub').innerHTML=`<span class="hi">${esc(I[r.k].hi)}</span>`;
+    setPans([[r.k,1]],[]);
+    return choiceButtons(r.opts,r.ans,ok=>{
+      const ref=REF[r.k].filter(([,n])=>n);
+      setPans([[r.k,1]],ref,{weights:true});
+      feedback(ok,`${ok?'Good estimate!':'Not quite.'} ${esc(I[r.k].n)}: ${esc(r.opts[r.ans])}.`);
+    });
+  }
+  $('who').textContent='Choose the unit';
+  $('q').textContent=r.q;
+  $('sub').innerHTML=`<span class="hi">${esc(I[r.k].hi)}</span>`;
+  setPans([[r.k,1]],[]);
+  choiceButtons(r.opts,r.ans,ok=>{
+    const heavy=r.ans===0;
+    feedback(ok,`${ok?'Right!':'Think again.'} ${heavy?'Heavy things are weighed in kilograms (kg).':'Light things are weighed in grams (g).'}`);
+  });
+}
+
+/* Game 5: Pour It */
+function roundPour(r){
+  $('who').textContent=r.who;
+  $('q').textContent=r.q;
+  $('sub').innerHTML=`1 L = 1000 ml. Each ${esc(r.pname)} holds <b>${fmtML(r.size)}</b>.`;
+  setupJug(r);
+  const need=r.target/r.size;
+  S.tries=0;
+  numberInput(v=>{
+    S.tries++;lockNumber();$('fb').hidden=true;
+    pour(v,r,()=>{
+      const ok=v===need;
+      if(ok){
+        sfx.ok();
+        feedback(true,`Full to the top!<span class="eq">${v} × ${fmtML(r.size)} = ${fmtML(r.target)}</span>`);
+        S.res[S.i]=S.tries===1;finishRound(S.tries===1);
+      } else {
+        sfx.no();
+        if(S.tries>=3){
+          feedback(false,`The answer is ${need}.<span class="eq">${need} × ${fmtML(r.size)} = ${fmtML(r.target)}</span>`);
+          fillJug(r.target,r);finishRound(false);return;
+        }
+        feedback(false,v<need?`Not full yet. ${v} × ${fmtML(r.size)} = ${fmtML(v*r.size)}. Try more.`:`It spilled over! ${v} × ${fmtML(r.size)} = ${fmtML(v*r.size)} is more than ${fmtML(r.target)}. Try fewer.`);
+        $('ctrl').querySelectorAll('button,input').forEach(x=>x.disabled=false);
+      }
+    });
+  });
+}
+
+function renderSummary(){
+  const n=S.rounds.length, got=S.res.filter(x=>x===true).length;
+  const stars=got===n?3:got>=Math.ceil(n*0.7)?2:got>=Math.ceil(n*0.4)?1:0;
+  const id=MODES[S.m].id;
+  if(S.best[id]==null||stars>S.best[id]){S.best[id]=stars;saveBest();}
+  renderModes();
+  $('who').textContent=MODES[S.m].t;
+  $('q').textContent='Well played!';
+  const nextM=(S.m+1)%MODES.length;
+  $('ctrl').innerHTML=`<div class="summary"><span class="big">${got} / ${n}</span><span>right on the first try</span><span class="stars" aria-label="${stars} of 3 stars">${'★'.repeat(stars)}<span class="off">${'★'.repeat(3-stars)}</span></span><div class="choices" style="width:100%"><button class="btn" id="again">Play again</button><button class="btn primary" id="nextGame">Next: ${MODES[nextM].t} ▸</button></div></div>`;
+  $('again').onclick=()=>startMode(S.m);
+  $('nextGame').onclick=()=>startMode(nextM);
+  if(stars) sfx.ok();
+}
+
+/* boot */
+function start(data){
+  if(data && typeof data.m==='number') startMode(data.m); else startMode(0);
+}
+window.claude?.hot?.snapshot?.(()=>({m:S.m}));
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+})();
+</script>
