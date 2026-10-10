@@ -44,8 +44,12 @@
   --berry-soft: #4A1C2B; --sky: #78AEEB; --sky-soft: #1C3350; --paper: #F4EEDD; color-scheme: dark;
 }
 * { box-sizing: border-box; }
-body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
-.wrap { max-width: 980px; margin: 0 auto; padding-inline: 16px; padding-block: 12px 48px; }
+html { -webkit-tap-highlight-color: transparent; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; touch-action: manipulation; }
+/* Touch screens: no text selection, callouts or long-press menus while children tap */
+.wrap, dialog { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+input { -webkit-user-select: text; user-select: text; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 12px 48px; }
 h1, h2, h3 { font-family: var(--font-display); line-height: 1.1; text-wrap: balance; margin: 0; }
 button { font: inherit; color: inherit; cursor: pointer; }
 button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; }
@@ -60,6 +64,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 3
 .pill.star { background: var(--mango-soft); border-color: var(--mango); font-variant-numeric: tabular-nums; }
 .iconbtn { border: 1.5px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 12px; font-size: .9rem; font-weight: 600; }
 .iconbtn[aria-pressed="false"] { opacity: .6; }
+.iconbtn { min-height: 40px; }
 
 /* Home */
 .hero { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; align-items: center; padding-block: 18px 8px; }
@@ -72,7 +77,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 3
 .section-head span { color: var(--muted); font-size: .9rem; }
 .stalls { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
 .stall { position: relative; text-align: left; border: 2px solid var(--ink); border-radius: var(--r); background: var(--surface); padding: 0; overflow: hidden; display: flex; flex-direction: column; transition: transform .15s ease, box-shadow .15s ease; box-shadow: 0 4px 0 var(--ink); }
-.stall:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--ink); }
+@media (hover: hover) { .stall:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--ink); } }
 .stall:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--ink); }
 .awning { height: 18px; background: repeating-linear-gradient(90deg, var(--c1) 0 22px, var(--paper) 22px 44px); border-bottom: 2px solid var(--ink); }
 .stall .body { display: flex; gap: 12px; padding: 12px 14px 14px; align-items: center; }
@@ -88,7 +93,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 3
 .gamehead { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
 .gamehead h2 { font-size: 1.6rem; font-weight: 800; margin-right: auto; }
 .dots { display: flex; gap: 6px; flex-wrap: wrap; }
-.dots i { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--ink); background: var(--surface); }
+.dots i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--ink); background: var(--surface); }
 .dots i.done { background: var(--leaf); }
 .dots i.miss { background: var(--mango); }
 .dots i.now { box-shadow: 0 0 0 3px var(--sky-soft); border-color: var(--sky); }
@@ -101,13 +106,28 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 3
 .stage svg { max-width: 100%; height: auto; }
 .choices { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
 .choice { border: 2px solid var(--ink); background: var(--surface); border-radius: 14px; padding: 10px 18px; font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; box-shadow: 0 3px 0 var(--ink); min-width: 64px; }
-.choice:hover { background: var(--mango-soft); }
+@media (hover: hover) { .choice:hover { background: var(--mango-soft); } }
 .choice:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
 .choice.good { background: var(--leaf-soft); border-color: var(--leaf); }
 .choice.bad { background: var(--berry-soft); border-color: var(--berry); animation: shake .35s; }
 .choice[disabled] { cursor: default; }
 .choice.card { padding: 8px; display: grid; justify-items: center; gap: 4px; font-size: 1rem; }
-.choice.card svg { width: 84px; height: 84px; }
+.choice.card svg { width: 96px; height: 96px; }
+.choice.card.wide svg { width: 220px; height: auto; max-width: 100%; }
+.choice.long { font-family: var(--font-body); font-size: 1.05rem; font-weight: 600; }
+.frac { display: inline-flex; flex-direction: column; align-items: center; line-height: 1; vertical-align: middle; font-family: var(--font-display); font-weight: 800; font-variant-numeric: tabular-nums; margin: 0 .1em; }
+.frac > span:first-child { border-bottom: .11em solid currentColor; padding: 0 .2em .06em; }
+.frac > span:last-child { padding-top: .08em; }
+.choice .frac { font-size: 1.5rem; }
+.bigfrac { font-size: 4rem; color: var(--berry); }
+.pairs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 600px; }
+.pairs .col { display: grid; gap: 10px; }
+.pcard { border: 2px solid var(--ink); background: var(--surface); border-radius: 14px; box-shadow: 0 3px 0 var(--ink); min-height: 76px; display: grid; place-items: center; padding: 6px; font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; }
+.pcard svg { width: 72px; height: 72px; }
+.pcard .frac { font-size: 1.7rem; }
+.pcard.sel { border-color: var(--sky); box-shadow: 0 0 0 4px var(--sky); }
+.pcard.done { background: var(--leaf-soft); border-color: var(--leaf); box-shadow: none; opacity: .75; }
+.pcard.bad { background: var(--berry-soft); border-color: var(--berry); animation: shake .35s; }
 .go { border: 2px solid var(--ink); background: var(--mango); color: #1E2A3B; border-radius: 14px; padding: 10px 26px; font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; box-shadow: 0 3px 0 var(--ink); }
 .go.alt { background: var(--surface); color: var(--ink); }
 .feedback { min-height: 56px; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; text-align: center; border-radius: 14px; padding: 10px 14px; font-weight: 500; }
@@ -127,7 +147,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 3
 .plate h4 { margin: 0; font-family: var(--font-display); font-size: 1.15rem; }
 .plate .count { font-variant-numeric: tabular-nums; color: var(--muted); font-size: .85rem; }
 .fruitrow { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
-.fruit { border: none; background: none; padding: 0; width: 40px; height: 40px; }
+.fruit { border: none; background: none; padding: 0; width: 46px; height: 46px; }
 .fruit svg { width: 100%; height: 100%; }
 .pile { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; padding: 10px; border-radius: 16px; border: 2px dashed var(--line); width: 100%; max-width: 560px; min-height: 64px; }
 .story { background: var(--surface-2); border-radius: 16px; padding: 14px 16px; max-width: 62ch; font-size: 1rem; }
@@ -140,7 +160,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 3
 .sentence { font-family: var(--font-display); font-size: clamp(1.25rem, 3.4vw, 1.6rem); font-weight: 700; text-align: center; }
 .sentence .blank { display: inline-block; min-width: 4.5em; border-bottom: 3px solid var(--ink); color: var(--leaf); }
 .grouparea { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 520px; }
-.gitem { width: 46px; height: 46px; border: none; background: none; padding: 0; }
+.gitem { width: 52px; height: 52px; border: none; background: none; padding: 0; }
 .gitem svg { width: 100%; height: 100%; }
 
 /* Results, certificate, teacher */
@@ -162,6 +182,14 @@ th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--lin
 th { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
 td.pg { font-variant-numeric: tabular-nums; white-space: nowrap; }
 
+/* Wide landscape screens (smart boards, laptops): question on the left, play area on the right */
+@media (min-width: 900px) and (orientation: landscape) {
+  .board.play { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); grid-template-rows: auto 1fr; align-items: start; column-gap: 28px; }
+  .board.play .prompt { grid-column: 1; grid-row: 1; flex-direction: column; }
+  .board.play .prompt p { font-size: 1.45rem; }
+  .board.play .stage { grid-column: 2; grid-row: 1 / span 2; }
+  .board.play .feedback { grid-column: 1; grid-row: 2; align-self: start; flex-direction: column; }
+}
 @keyframes shake { 0%,100% { transform: translateX(0) } 25% { transform: translateX(-6px) } 75% { transform: translateX(6px) } }
 @keyframes pop { 0% { transform: scale(.6); opacity: 0 } 100% { transform: scale(1); opacity: 1 } }
 .pop { animation: pop .35s ease-out both; }
@@ -181,7 +209,10 @@ td.pg { font-variant-numeric: tabular-nums; white-space: nowrap; }
       <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="var(--paratha)" stroke="var(--ink)" stroke-width="5"/><path d="M50 6v88" stroke="var(--ink)" stroke-width="5"/><path d="M50 50L6 50" stroke="var(--ink)" stroke-width="5"/><path d="M6 50A44 44 0 0 1 50 6Z" fill="var(--shade)" stroke="var(--ink)" stroke-width="5"/></svg>
       <div><b>Fair Share Mela</b><small>Maths Mela · Class 3 · Chapter 8</small></div>
     </div>
-    <span class="pill star" id="totalStars" aria-live="polite">★ 0 / 36</span>
+    <span class="pill star" id="totalStars" aria-live="polite">★ 0 / 48</span>
+    <button class="iconbtn" id="smallerBtn" aria-label="Make everything smaller">A−</button>
+    <button class="iconbtn" id="biggerBtn" aria-label="Make everything bigger">A+</button>
+    <button class="iconbtn" id="fullBtn">Full screen</button>
     <button class="iconbtn" id="soundBtn" aria-pressed="true">Sound on</button>
     <button class="iconbtn" id="teacherBtn">Teacher guide</button>
   </header>
@@ -191,9 +222,10 @@ td.pg { font-variant-numeric: tabular-nums; white-space: nowrap; }
 <dialog id="teacher">
   <div class="dlg">
     <h2>Teacher guide</h2>
-    <p style="margin:0;color:var(--muted)">Twelve stalls follow Chapter 8 page by page. Children earn up to 3 stars per stall for first-try answers. Questions shuffle every time, so a stall can be replayed. Use it on a smart board as a whole-class activity, or in pairs on tablets. As the textbook advises, call the fractions <b>one half</b> and <b>one quarter</b>, not "1 out of 2".</p>
+    <p style="margin:0;color:var(--muted)">Twelve stalls follow Chapter 8 page by page, and four extension stalls introduce fraction numbers (1/2, 1/3, 1/4…). Children earn up to 3 stars per stall for first-try answers. Questions shuffle every time, so a stall can be replayed. Use it on a smart board as a whole-class activity, or in pairs on tablets. As the textbook advises, call the fractions <b>one half</b> and <b>one quarter</b>, not "1 out of 2". The extension stalls keep this: 2/3 is always read as "two thirds".</p>
+    <p style="margin:0;color:var(--muted)"><b>On a smart board:</b> press <b>Full screen</b>. The page enlarges itself to fit the board; use <b>A+</b> / <b>A−</b> if children at the back cannot read it. On wide screens the question sits on the left and the play area on the right, so nothing needs scrolling.</p>
     <div class="tablewrap"><table id="tguide"><thead><tr><th>Stall</th><th>Book page</th><th>Children will…</th></tr></thead><tbody></tbody></table></div>
-    <p style="margin:0;font-size:.85rem;color:var(--muted)">Pair it with paper folding (p. 110, p. 113) and the fraction cards from the back of the book (p. 116). Stars are saved on this device only.</p>
+    <p style="margin:0;font-size:.85rem;color:var(--muted)">Fraction Numbers stalls go beyond the Class 3 textbook (fraction notation appears in later classes). Use them for enrichment after the chapter. Pair the chapter stalls with paper folding (p. 110, p. 113) and the fraction cards from the back of the book (p. 116). Stars are saved on this device only.</p>
     <div><button class="go" id="closeTeacher">Close</button></div>
   </div>
 </dialog>
@@ -403,8 +435,8 @@ function renderRound() {
     H("h2", { text: game.title }), dots,
   ]));
   const promptP = H("p", { html: round.prompt });
-  const board = H("section", { class: "board" });
-  board.appendChild(H("div", { class: "prompt" }, [promptP, H("button", { class: "say", text: "🔊 Read", "aria-label": "Read the question aloud", onclick: () => speak(promptP.textContent) })]));
+  const board = H("section", { class: "board play" });
+  board.appendChild(H("div", { class: "prompt" }, [promptP, H("button", { class: "say", text: "🔊 Read", "aria-label": "Read the question aloud", onclick: () => { const c = promptP.cloneNode(true); c.querySelectorAll(".frac").forEach(f => f.replaceWith(" " + f.getAttribute("aria-label") + " ")); speak(c.textContent); } })]));
   const stage = H("div", { class: "stage" });
   const fb = H("div", { class: "feedback info", "aria-live": "polite", text: round.hint || "Take your time. You can try again if you miss." });
   board.append(stage, fb);
@@ -457,6 +489,7 @@ function choiceRow(stage, ctx, options, onRight) {
   const row = H("div", { class: "choices" });
   options.forEach(o => {
     const b = H("button", { class: "choice" + (o.card ? " card" : "") });
+    if (o.cls) b.classList.add(...o.cls.split(" "));
     if (o.node) b.appendChild(o.node);
     if (o.label != null) b.appendChild(H("span", { html: String(o.label) }));
     b.addEventListener("click", () => {
@@ -750,9 +783,9 @@ GAMES.push({
       prompt: "Which is a <b>fair</b> way for Amit and Bala to share?",
       render(stage, ctx) {
         const opts = shuffle([
-          { label: "Share the mangoes equally, and take turns with the lamp at night and the blanket in winter", ok: true, why: "Now both brothers get the useful part equally. That is a fair share!" },
-          { label: "Amit keeps all the mangoes and Bala keeps the tree", ok: false, why: "Bala gets no fruit at all. That is not fair." },
-          { label: "Bala keeps the blanket in summer only", ok: false, why: "Nobody needs a woollen blanket in summer. That is not fair to Bala." },
+          { cls: "long", label: "Share the mangoes equally, and take turns with the lamp at night and the blanket in winter", ok: true, why: "Now both brothers get the useful part equally. That is a fair share!" },
+          { cls: "long", label: "Amit keeps all the mangoes and Bala keeps the tree", ok: false, why: "Bala gets no fruit at all. That is not fair." },
+          { cls: "long", label: "Bala keeps the blanket in summer only", ok: false, why: "Nobody needs a woollen blanket in summer. That is not fair to Bala." },
         ]);
         const col = H("div", { class: "choices", style: "flex-direction:column;align-items:stretch;max-width:560px;width:100%" });
         stage.appendChild(col);
@@ -1040,11 +1073,171 @@ GAMES.push({
   },
 });
 
+
+/* ================= FRACTION NUMBERS (extension) ================= */
+const NUMW = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight"];
+const DENW = { 2: ["half", "halves"], 3: ["third", "thirds"], 4: ["quarter", "quarters"], 5: ["fifth", "fifths"], 6: ["sixth", "sixths"], 8: ["eighth", "eighths"] };
+const fracWord = (a, b) => `${NUMW[a]} ${DENW[b][a === 1 ? 0 : 1]}`;
+const fracHTML = (a, b) => `<span class="frac" role="img" aria-label="${fracWord(a, b)}"><span>${a}</span><span>${b}</span></span>`;
+const cutsOf = b => Array.from({ length: b - 1 }, (_, i) => (i + 1) / b);
+function eqFig(b, variant) {
+  const v = variant || pick(b === 4 ? ["ci", "rcV", "sqH", "sqG", "sqX"] : ["ci", "rcV", "sqH"]);
+  if (v === "ci") return fig.ci(Array(b).fill(360 / b));
+  if (v === "rcV") return fig.rcV(cutsOf(b));
+  if (v === "sqH") return fig.sqH(cutsOf(b));
+  if (v === "sqG") return fig.sqG(.5, .5);
+  return fig.sqX();
+}
+const firstN = n => new Set(Array.from({ length: n }, (_, i) => i));
+const fracArt = (a, b) => S("svg", { viewBox: "0 0 200 200" }, [
+  S("text", { x: 100, y: 88, "text-anchor": "middle", "font-size": 80, "font-weight": 800, fill: "var(--ink)", "font-family": "Baloo 2, sans-serif" }, [document.createTextNode(a)]),
+  S("line", { x1: 55, y1: 104, x2: 145, y2: 104, stroke: "var(--ink)", "stroke-width": 9, "stroke-linecap": "round" }),
+  S("text", { x: 100, y: 180, "text-anchor": "middle", "font-size": 80, "font-weight": 800, fill: "var(--berry)", "font-family": "Baloo 2, sans-serif" }, [document.createTextNode(b)]),
+]);
+
+/* 13. Name the Fraction */
+GAMES.push({
+  id: "name", sec: 3, title: "Name the Fraction", page: "Extension", c1: "var(--berry)",
+  lo: "Read a picture as a fraction number: the bottom number tells how many equal parts, the top number tells how many are coloured.",
+  art: () => fracArt(1, 3),
+  make() {
+    const list = [[1, 2], [1, 4], [1, 3], ...shuffle([[2, 3], [3, 4], [1, 6], [2, 5], [5, 6], [3, 8]]).slice(0, 5)];
+    return list.map(([a, b]) => {
+      const val = a / b;
+      const cand = [[b - a, b], [a, b + 1], [a, b - 1], [1, a + b], [a + 1, b], [1, b + 1]]
+        .filter(([x, y]) => DENW[y] && x >= 1 && x < y && Math.abs(x / y - val) > 1e-9);
+      const seen = new Set(); const distract = [];
+      for (const c of shuffle(cand)) { const k = c.join("/"); if (!seen.has(k)) { seen.add(k); distract.push(c); } if (distract.length === 2) break; }
+      return {
+        prompt: "What fraction of the shape is <b>coloured</b>?",
+        hint: "Bottom number = how many equal parts in all. Top number = how many parts are coloured.",
+        render(stage, ctx) {
+          const { svg } = drawFigure(eqFig(b), firstN(a), { label: "shape" });
+          svg.setAttribute("width", 260); stage.appendChild(svg);
+          choiceRow(stage, ctx, shuffle([[a, b], ...distract]).map(([x, y]) => ({
+            label: fracHTML(x, y), ok: x === a && y === b,
+            why: x === a && y === b ? `The shape has ${b} equal parts and ${a} ${a === 1 ? "is" : "are"} coloured. That is ${fracHTML(a, b)}, ${fracWord(a, b)}.` : `Count again. How many equal parts are there in all? How many are coloured?`,
+          })));
+        },
+      };
+    });
+  },
+});
+
+/* 14. Shade the Fraction */
+GAMES.push({
+  id: "shade", sec: 3, title: "Shade the Fraction", page: "Extension", c1: "var(--mango)",
+  lo: "Show a given fraction (1/2, 1/3, 3/4, 2/5…) by colouring the right number of equal parts.",
+  art: () => drawFigure(fig.ci([120, 120, 120]), new Set([0, 1])).svg,
+  make() {
+    const list = [[1, 2], [1, 3], [3, 4], ...shuffle([[2, 3], [2, 5], [5, 8], [1, 6], [4, 6], [3, 5]]).slice(0, 3)];
+    return list.map(([a, b]) => ({
+      prompt: `Colour ${fracHTML(a, b)} of the shape. Tap the parts, then press Check.`,
+      hint: `${fracHTML(a, b)} is ${fracWord(a, b)}: the shape has ${b} equal parts. Colour ${a} of them.`,
+      render(stage, ctx) {
+        const on = new Set();
+        const { svg, paths } = drawFigure(eqFig(b), on, { label: "shape to colour" });
+        svg.setAttribute("width", 280);
+        paths.forEach((p, i) => {
+          p.style.cursor = "pointer"; p.setAttribute("tabindex", 0); p.setAttribute("role", "button"); p.setAttribute("aria-label", `part ${i + 1}`);
+          const tg = () => { if (ctx.solved) return; sTap(); if (on.has(i)) on.delete(i); else on.add(i); p.setAttribute("fill", on.has(i) ? "var(--shade)" : "var(--paper)"); };
+          p.addEventListener("click", tg); p.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tg(); } });
+        });
+        stage.appendChild(svg);
+        stage.appendChild(H("button", { class: "go", text: "Check", onclick: () => {
+          if (ctx.solved) return;
+          if (on.size === a) ctx.ok(`${a} of ${b} equal parts coloured. That is ${fracHTML(a, b)}, ${fracWord(a, b)}.`);
+          else ctx.bad(`You coloured ${on.size}. The top number of ${fracHTML(a, b)} tells how many parts to colour.`);
+        } }));
+      },
+    }));
+  },
+});
+
+/* 15. Fraction Pairs */
+GAMES.push({
+  id: "pairs", sec: 3, title: "Fraction Pairs", page: "Extension", c1: "var(--sky)",
+  lo: "Match pictures and fraction names to fraction numbers (1/2 ↔ one half ↔ picture).",
+  art: () => { const s = S("svg", { viewBox: "0 0 200 200" }); const a = drawFigure(fig.ci([90, 90, 90, 90]), new Set([0])).svg; a.setAttribute("width", 110); a.setAttribute("height", 110); a.setAttribute("y", 45); s.appendChild(a); const f = fracArt(1, 4); f.setAttribute("x", 95); f.setAttribute("y", 45); f.setAttribute("width", 105); f.setAttribute("height", 110); s.appendChild(f); return s; },
+  make() {
+    const sets = [
+      { left: "pic", items: [[1, 2], [1, 3], [1, 4], [1, 5]] },
+      { left: "pic", items: shuffle([[2, 3], [3, 4], [1, 6], [2, 5], [3, 8]]).slice(0, 4) },
+      { left: "word", items: shuffle([[1, 2], [2, 3], [3, 4], [1, 6], [4, 5], [1, 8]]).slice(0, 4) },
+    ];
+    return sets.map(st => ({
+      prompt: st.left === "pic" ? "Match each <b>picture</b> with its <b>fraction</b>. Tap a picture, then tap its fraction." : "Match each <b>fraction name</b> with its <b>fraction number</b>. Tap a name, then tap its number.",
+      hint: "A matched pair turns green.",
+      render(stage, ctx) {
+        let sel = null, left = st.items.length;
+        const L = H("div", { class: "col" }), Rt = H("div", { class: "col" });
+        const mk = (it, side) => {
+          const [a, b] = it;
+          const card = H("button", { class: "pcard", "aria-label": fracWord(a, b) });
+          if (side === "R") card.innerHTML = fracHTML(a, b);
+          else if (st.left === "pic") card.appendChild(drawFigure(eqFig(b, b === 4 ? "sqG" : "ci"), firstN(a)).svg);
+          else card.textContent = fracWord(a, b);
+          card.dataset.k = a + "/" + b; card.dataset.side = side;
+          card.addEventListener("click", () => {
+            if (ctx.solved || card.classList.contains("done")) return;
+            card.classList.remove("bad");
+            if (!sel || sel.dataset.side === side) { if (sel) sel.classList.remove("sel"); sel = card; card.classList.add("sel"); sTap(); return; }
+            if (sel.dataset.k === card.dataset.k) {
+              [sel, card].forEach(c => { c.classList.remove("sel"); c.classList.add("done"); c.disabled = true; }); sel = null; left--; sGood();
+              if (!left) ctx.ok("You matched every pair!"); else ctx.info(`Good match! ${left} more to go.`);
+            } else {
+              const other = sel; other.classList.remove("sel"); sel = null; void card.offsetWidth; card.classList.add("bad");
+              ctx.bad("Those two do not match. Count the equal parts and the coloured parts again.");
+            }
+          });
+          return card;
+        };
+        shuffle(st.items).forEach(it => L.appendChild(mk(it, "L")));
+        shuffle(st.items).forEach(it => Rt.appendChild(mk(it, "R")));
+        stage.appendChild(H("div", { class: "pairs" }, [L, Rt]));
+      },
+    }));
+  },
+});
+
+/* 16. Bigger Piece */
+GAMES.push({
+  id: "bigger", sec: 3, title: "Which is Bigger?", page: "Extension", c1: "var(--leaf)",
+  lo: "Compare fractions using same-size fraction bars: more equal parts means smaller pieces; 2/4 is the same as 1/2.",
+  art: () => { const s = S("svg", { viewBox: "0 0 200 200" }); vsplit(10, 30, 180, 60, [.5]).forEach((p, i) => s.appendChild(S("path", { d: p.d, fill: i ? "var(--paper)" : "var(--shade)", stroke: "#1E2A3B", "stroke-width": 4 }))); vsplit(10, 110, 180, 60, cutsOf(4)).forEach((p, i) => s.appendChild(S("path", { d: p.d, fill: i ? "var(--paper)" : "var(--shade)", stroke: "#1E2A3B", "stroke-width": 4 }))); return s; },
+  make() {
+    const unit = shuffle([[[1, 2], [1, 4]], [[1, 3], [1, 6]], [[1, 4], [1, 3]], [[1, 8], [1, 2]], [[1, 5], [1, 3]]]).slice(0, 3);
+    const same = shuffle([[[1, 5], [3, 5]], [[3, 4], [1, 4]], [[2, 6], [5, 6]]]).slice(0, 2);
+    const list = [...unit, ...same, [[1, 2], [2, 4]]];
+    const bar = (a, b) => drawFigure({ kind: "plain", parts: vsplit(10, 50, 180, 100, cutsOf(b)) }, firstN(a), { label: fracWord(a, b) }).svg;
+    return list.map(([[a1, b1], [a2, b2]]) => {
+      const v1 = a1 / b1, v2 = a2 / b2, eq = Math.abs(v1 - v2) < 1e-9;
+      const reason = b1 !== b2
+        ? (a1 === a2 ? `The bars are the same size. ${b1 < b2 ? fracHTML(a1, b1) : fracHTML(a2, b2)} has fewer equal parts, so each part is bigger.` : "")
+        : `Both bars have ${b1} equal parts. More coloured parts means a bigger fraction.`;
+      return {
+        prompt: `Which is <b>bigger</b>: ${fracHTML(a1, b1)} or ${fracHTML(a2, b2)}?`,
+        hint: "Both bars are the same whole. Compare the coloured parts.",
+        render(stage, ctx) {
+          const opts = [
+            { card: true, cls: "wide", node: bar(a1, b1), label: fracHTML(a1, b1), ok: !eq && v1 > v2 },
+            { card: true, cls: "wide", node: bar(a2, b2), label: fracHTML(a2, b2), ok: !eq && v2 > v1 },
+          ];
+          opts.forEach(o => o.why = o.ok ? reason : "Look at the coloured part of each bar. Which covers more?");
+          if (eq) { opts.forEach(o => o.why = "Look closely: do the coloured parts reach the same place?"); opts.push({ label: "Both are the same", ok: true, why: `${fracHTML(a2, b2)} and ${fracHTML(a1, b1)} cover the same amount. 2 quarters make 1 half!` }); }
+          choiceRow(stage, ctx, opts);
+        },
+      };
+    });
+  },
+});
+
 /* ================= HOME ================= */
 const SECTIONS = [
   { name: "Halves", note: "Pages 108–110 · fair share, one half, ways to make a half" },
   { name: "Half and Double", note: "Pages 111–112 · marbles, number line, riddles" },
   { name: "Quarters", note: "Pages 112–116 · one quarter, 3 quarters, making a whole" },
+  { name: "Fraction Numbers", note: "Extension · writing fractions as 1/2, 1/3, 1/4, 2/3, 3/4…" },
 ];
 function heroArt() {
   const s = S("svg", { viewBox: "0 0 340 220", role: "img", "aria-label": "A paratha cut into four quarters and a chocolate bar cut in half" });
@@ -1062,7 +1255,7 @@ function home() {
   const hero = H("section", { class: "hero" }, [
     H("div", {}, [
       H("h1", { html: "Is it a <em>fair</em> share?" }),
-      H("p", { text: "Shabnam and Mukta are sharing their lunch. Visit all 12 stalls of the Fair Share Mela to learn about halves, doubles and quarters. Win up to 3 stars at every stall!" }),
+      H("p", { text: "Shabnam and Mukta are sharing their lunch. Visit every stall of the Fair Share Mela to learn about halves, doubles, quarters and fraction numbers. Win up to 3 stars at every stall!" }),
     ]),
     heroArt(),
   ]);
@@ -1084,7 +1277,7 @@ function home() {
   });
   const played = GAMES.filter(g => store.stars[g.id]).length;
   app.appendChild(H("div", { class: "cert-banner" }, [
-    H("p", { html: played === GAMES.length ? "<b>You visited every stall!</b> Your Fair Share Champion certificate is ready." : `<b>Fair Share Champion certificate</b> · Play all 12 stalls to unlock it. You have played <b>${played}</b> of 12.` }),
+    H("p", { html: played === GAMES.length ? "<b>You visited every stall!</b> Your Fair Share Champion certificate is ready." : `<b>Fair Share Champion certificate</b> · Play all ${GAMES.length} stalls to unlock it. You have played <b>${played}</b> of ${GAMES.length}.` }),
     H("button", { class: "go" + (played === GAMES.length ? "" : " alt"), text: played === GAMES.length ? "Open certificate" : "Locked", disabled: played === GAMES.length ? null : "", onclick: certificate }),
   ]));
 }
@@ -1100,7 +1293,7 @@ function certificate() {
     H("h2", { text: "Fair Share Champion" }),
     H("div", { text: "This certificate is proudly given to" }),
     nameEl,
-    H("div", { html: `for completing all 12 stalls of the Fair Share Mela and earning <b>${totalStars()} of ${GAMES.length * 3} stars</b>. You know halves, doubles and quarters!` }),
+    H("div", { html: `for completing all ${GAMES.length} stalls of the Fair Share Mela and earning <b>${totalStars()} of ${GAMES.length * 3} stars</b>. You know halves, doubles, quarters and fractions!` }),
     H("div", { class: "bigstars", html: "★★★" }),
     H("div", { style: "font-size:.9rem;color:#56666E", text: d }),
     H("label", { for: "childName", text: "Your name" }), input,
@@ -1115,6 +1308,29 @@ $("#closeTeacher").addEventListener("click", () => { const d = $("#teacher"); if
 const sb = $("#soundBtn");
 const syncSound = () => { sb.setAttribute("aria-pressed", store.sound ? "true" : "false"); sb.textContent = store.sound ? "Sound on" : "Sound off"; };
 sb.addEventListener("click", () => { store.sound = !store.sound; save(); syncSound(); sTap(); });
-syncSound(); updateTotal(); home();
+syncSound();
+
+/* Big screens: scale the whole page so a 75" board (1920×1080 or 4K) is filled and readable from the back */
+function fit() {
+  const w = window.innerWidth, h = window.innerHeight;
+  let z = w >= 1100 ? Math.min(w / 1180, h / 640) : 1;
+  z = Math.max(1, Math.min(z, 3.2)) * (store.size || 1);
+  document.body.style.zoom = String(Math.round(z * 100) / 100);
+}
+const setSize = f => { store.size = Math.max(0.7, Math.min(1.6, Math.round(((store.size || 1) * f) * 100) / 100)); save(); fit(); };
+$("#biggerBtn").addEventListener("click", () => setSize(1.1));
+$("#smallerBtn").addEventListener("click", () => setSize(1 / 1.1));
+const fb = $("#fullBtn");
+const syncFull = () => { fb.textContent = document.fullscreenElement ? "Exit full screen" : "Full screen"; };
+fb.addEventListener("click", () => {
+  try {
+    const p = document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+    if (p && p.catch) p.catch(() => { fb.textContent = "Use F11 for full screen"; });
+  } catch (e) { fb.textContent = "Use F11 for full screen"; }
+});
+document.addEventListener("fullscreenchange", () => { syncFull(); fit(); });
+window.addEventListener("resize", fit);
+document.addEventListener("contextmenu", e => { if (!e.target.closest("input")) e.preventDefault(); });
+fit(); updateTotal(); home();
 })();
 </script>
