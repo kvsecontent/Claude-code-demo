@@ -1,0 +1,1058 @@
+<title>Water Wonder Trail</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Lexend:wght@400;500;600&display=swap">
+<style>
+/* Layout: a trail that follows one raindrop (Boondi) from sky to tap — four chapter stretches, each a row of stops. */
+:root {
+  --bg: #E9F3F8;
+  --surface: #FFFFFF;
+  --surface-2: #F3F9FC;
+  --ink: #12304A;
+  --muted: #4E6578;
+  --line: #C3D9E6;
+  --rain: #1E7FC2;
+  --rain-soft: #D6EAF8;
+  --clay: #B9562D;
+  --clay-soft: #F6DDD1;
+  --leaf: #23824A;
+  --leaf-soft: #D3F0DE;
+  --berry: #C2384F;
+  --berry-soft: #F9DADF;
+  --sun: #F2B01E;
+  --paper: #FFFDF8;
+  --soil: #8A5A35;
+  --font-display: "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Lexend", "Segoe UI", system-ui, sans-serif;
+  --r: 18px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D1B29; --surface: #15283B; --surface-2: #1C3249; --ink: #E6F1F8; --muted: #9FB6C8; --line: #2B4762;
+    --rain: #63AEE8; --rain-soft: #173552; --clay-soft: #4A2618; --leaf: #4CC07A; --leaf-soft: #163A27;
+    --berry: #F06F86; --berry-soft: #4A1B26; --paper: #F4EFE3; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D1B29; --surface: #15283B; --surface-2: #1C3249; --ink: #E6F1F8; --muted: #9FB6C8; --line: #2B4762;
+  --rain: #63AEE8; --rain-soft: #173552; --clay-soft: #4A2618; --leaf: #4CC07A; --leaf-soft: #163A27;
+  --berry: #F06F86; --berry-soft: #4A1B26; --paper: #F4EFE3; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-tap-highlight-color: transparent; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; touch-action: manipulation; }
+.wrap, dialog { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+input { -webkit-user-select: text; user-select: text; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 12px 48px; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.1; text-wrap: balance; margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
+
+.bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding-block: 8px; }
+.brand { display: flex; align-items: center; gap: 10px; margin-right: auto; }
+.brand svg { width: 42px; height: 48px; flex: none; }
+.brand b { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; }
+.brand small { display: block; font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-top: -4px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: var(--rain-soft); border: 1.5px solid var(--rain); font-weight: 600; font-size: .9rem; font-variant-numeric: tabular-nums; }
+.iconbtn { border: 1.5px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 12px; font-size: .9rem; font-weight: 600; min-height: 40px; }
+.iconbtn[aria-pressed="false"] { opacity: .6; }
+
+.hero { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; align-items: center; padding-block: 18px 8px; }
+.hero h1 { font-size: clamp(2.3rem, 6vw, 3.8rem); font-weight: 800; letter-spacing: -.02em; }
+.hero h1 em { font-style: normal; color: var(--rain); }
+.hero p { color: var(--muted); max-width: 46ch; margin: 10px 0 0; }
+.hero svg { width: 100%; max-width: 340px; justify-self: center; }
+.section-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin: 28px 0 12px; }
+.section-head h2 { font-size: 1.6rem; font-weight: 800; }
+.section-head .num { font-family: var(--font-display); font-weight: 800; color: var(--surface); background: var(--rain); border-radius: 50%; width: 1.7em; height: 1.7em; display: inline-grid; place-items: center; font-size: 1rem; align-self: center; }
+.section-head span { color: var(--muted); font-size: .9rem; }
+.stalls { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+.stall { text-align: left; border: 2px solid var(--ink); border-radius: var(--r); background: var(--surface); padding: 0; overflow: hidden; display: flex; flex-direction: column; transition: transform .15s ease, box-shadow .15s ease; box-shadow: 0 4px 0 var(--ink); }
+@media (hover: hover) { .stall:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--ink); } }
+.stall:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--ink); }
+.wave { height: 16px; background: radial-gradient(circle at 10px 0, var(--c1) 9px, transparent 10px) 0 0 / 20px 16px repeat-x, var(--surface-2); border-bottom: 2px solid var(--ink); }
+.stall .body { display: flex; gap: 12px; padding: 12px 14px 14px; align-items: center; }
+.stall .art { width: 64px; height: 64px; flex: none; }
+.stall h3 { font-size: 1.15rem; font-weight: 700; }
+.stall .meta { font-size: .78rem; color: var(--muted); }
+.stall .stars { font-size: 1rem; letter-spacing: 2px; color: var(--rain); margin-top: 2px; }
+.stall .stars i, .bigstars i { font-style: normal; color: var(--line); }
+.cert-banner { margin-top: 28px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; padding: 16px 18px; border-radius: var(--r); background: var(--surface); border: 2px dashed var(--rain); }
+.cert-banner p { margin: 0; flex: 1 1 260px; }
+
+.gamehead { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+.gamehead h2 { font-size: 1.6rem; font-weight: 800; margin-right: auto; }
+.dots { display: flex; gap: 6px; flex-wrap: wrap; }
+.dots i { width: 16px; height: 16px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 2px solid var(--ink); background: var(--surface); }
+.dots i.done { background: var(--rain); }
+.dots i.miss { background: var(--sun); }
+.dots i.now { box-shadow: 0 0 0 3px var(--rain-soft); border-color: var(--rain); }
+.board { margin-top: 12px; background: var(--surface); border: 2px solid var(--ink); border-radius: 22px; padding: 18px; display: grid; gap: 16px; }
+.prompt { display: flex; gap: 12px; align-items: flex-start; }
+.prompt p { margin: 0; font-size: clamp(1.1rem, 2.6vw, 1.35rem); font-weight: 500; flex: 1; min-width: 0; }
+.prompt p b { color: var(--clay); font-weight: 600; }
+:root[data-theme="dark"] .prompt p b { color: var(--sun); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .prompt p b { color: var(--sun); } }
+.say { flex: none; border: 1.5px solid var(--line); background: var(--surface-2); border-radius: 999px; padding: 6px 12px; font-size: .85rem; font-weight: 600; min-height: 40px; }
+.stage { display: grid; justify-items: center; gap: 14px; }
+.stage > svg { max-width: 100%; height: auto; }
+.choices { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.choices.stack { flex-direction: column; align-items: stretch; width: 100%; max-width: 560px; }
+.choice { border: 2px solid var(--ink); background: var(--surface); border-radius: 14px; padding: 10px 18px; font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; box-shadow: 0 3px 0 var(--ink); min-width: 64px; min-height: 52px; }
+@media (hover: hover) { .choice:hover { background: var(--rain-soft); } }
+.choice:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+.choice.good { background: var(--leaf-soft); border-color: var(--leaf); }
+.choice.bad { background: var(--berry-soft); border-color: var(--berry); animation: shake .35s; }
+.choice[disabled] { cursor: default; }
+.choice.long { font-family: var(--font-body); font-size: 1.02rem; font-weight: 600; text-align: left; }
+.choice.card { padding: 8px 10px; display: grid; justify-items: center; gap: 4px; font-size: 1.05rem; }
+.choice.card svg { width: 110px; height: 110px; }
+.choice .emo { font-size: 2.6rem; line-height: 1.1; }
+.go { border: 2px solid var(--ink); background: var(--clay); color: #fff; border-radius: 14px; padding: 10px 26px; font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; box-shadow: 0 3px 0 var(--ink); min-height: 52px; }
+.go.alt { background: var(--surface); color: var(--ink); }
+.go[disabled] { opacity: .55; cursor: default; }
+.feedback { min-height: 56px; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; text-align: center; border-radius: 14px; padding: 10px 14px; font-weight: 500; }
+.feedback.good { background: var(--leaf-soft); }
+.feedback.bad { background: var(--berry-soft); }
+.feedback.info { background: var(--surface-2); color: var(--muted); }
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; width: 100%; max-width: 600px; }
+.tile { border: 2px solid var(--line); border-radius: 16px; background: var(--surface-2); padding: 10px 6px; position: relative; display: grid; justify-items: center; gap: 4px; font-weight: 600; font-size: .95rem; min-height: 110px; align-content: center; }
+.tile .emo { font-size: 2.6rem; line-height: 1.1; }
+.tile[aria-pressed="true"] { border-color: var(--rain); background: var(--rain-soft); box-shadow: 0 0 0 3px var(--rain); }
+.tile[aria-pressed="true"]::after { content: "✓"; position: absolute; top: 4px; right: 10px; font-weight: 800; color: var(--rain); font-size: 1.2rem; }
+.tile.wrongpick { border-color: var(--berry); box-shadow: 0 0 0 3px var(--berry); }
+.card-big { border: 2px solid var(--ink); border-radius: 20px; background: var(--paper); color: #12304A; padding: 18px 22px; display: grid; justify-items: center; gap: 6px; text-align: center; max-width: 420px; width: 100%; box-shadow: 0 4px 0 var(--ink); }
+.card-big .emo { font-size: 3.6rem; line-height: 1; }
+.card-big b { font-family: var(--font-display); font-size: 1.35rem; }
+.bins { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 600px; }
+.bin { border: 2px solid var(--ink); border-radius: 18px; background: var(--surface); box-shadow: 0 3px 0 var(--ink); padding: 12px; display: grid; gap: 4px; justify-items: center; font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; min-height: 110px; align-content: center; }
+.bin .emo { font-size: 2.2rem; line-height: 1; }
+.bin small { font-family: var(--font-body); font-weight: 500; font-size: .8rem; color: var(--muted); }
+.bin.good { background: var(--leaf-soft); border-color: var(--leaf); }
+.bin.bad { background: var(--berry-soft); border-color: var(--berry); animation: shake .35s; }
+.path { display: grid; gap: 8px; width: 100%; max-width: 560px; counter-reset: step; }
+.path .step { border-radius: 12px; background: var(--rain-soft); border: 2px solid var(--rain); padding: 8px 12px; font-weight: 600; display: flex; gap: 10px; align-items: center; }
+.path .step::before { counter-increment: step; content: counter(step); font-family: var(--font-display); font-weight: 800; background: var(--rain); color: var(--surface); border-radius: 50%; width: 1.8em; height: 1.8em; display: grid; place-items: center; flex: none; }
+.path .slot { border-radius: 12px; border: 2px dashed var(--line); padding: 8px 12px; color: var(--muted); min-height: 44px; }
+.pool { display: grid; gap: 8px; width: 100%; max-width: 560px; }
+.story { background: var(--surface-2); border-radius: 16px; padding: 14px 16px; max-width: 62ch; font-size: 1.02rem; border-left: 6px solid var(--rain); }
+
+.result { text-align: center; display: grid; gap: 12px; justify-items: center; padding-block: 10px; }
+.bigstars { font-size: 3rem; letter-spacing: 6px; color: var(--rain); }
+.cert { border: 6px double var(--rain); border-radius: 20px; background: var(--paper); color: #12304A; padding: 28px 22px; text-align: center; display: grid; gap: 10px; max-width: 640px; margin: 18px auto; }
+.cert h2 { font-size: clamp(1.8rem, 6vw, 2.6rem); font-weight: 800; }
+.cert .name { font-family: var(--font-display); font-size: 2rem; font-weight: 700; border-bottom: 2px solid #12304A; min-height: 1.4em; }
+.cert label { font-size: .85rem; color: #4E6578; }
+.cert input { font: inherit; font-size: 1.1rem; padding: 8px 12px; border-radius: 10px; border: 2px solid #C3D9E6; background: #fff; color: #12304A; width: min(320px, 100%); justify-self: center; }
+dialog { border: 2px solid var(--ink); border-radius: 20px; background: var(--surface); color: var(--ink); max-width: min(780px, calc(100vw - 32px)); padding: 0; }
+dialog::backdrop { background: rgba(5, 15, 25, .55); }
+.dlg { padding: 20px; display: grid; gap: 12px; }
+.dlg h2 { font-size: 1.6rem; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+td.pg { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.drop { animation: fall linear infinite; }
+@keyframes fall { from { transform: translateY(-40px); } to { transform: translateY(210px); } }
+@keyframes shake { 0%,100% { transform: translateX(0) } 25% { transform: translateX(-6px) } 75% { transform: translateX(6px) } }
+@keyframes pop { 0% { transform: scale(.6); opacity: 0 } 100% { transform: scale(1); opacity: 1 } }
+.pop { animation: pop .35s ease-out both; }
+@media (min-width: 900px) and (orientation: landscape) {
+  .board.play { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); grid-template-rows: auto 1fr; align-items: start; column-gap: 28px; }
+  .board.play .prompt { grid-column: 1; grid-row: 1; flex-direction: column; }
+  .board.play .prompt p { font-size: 1.45rem; }
+  .board.play .stage { grid-column: 2; grid-row: 1 / span 2; }
+  .board.play .feedback { grid-column: 1; grid-row: 2; align-self: start; flex-direction: column; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+@media (max-width: 640px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero svg { max-width: 240px; order: -1; }
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .board { padding: 14px; }
+  .brand b { font-size: 1.25rem; }
+  .choice.card svg { width: 84px; height: 84px; }
+}
+</style>
+
+<div class="wrap">
+  <header class="bar">
+    <div class="brand">
+      <svg viewBox="0 0 84 96" aria-hidden="true"><path d="M42 4C42 4 8 46 8 64a34 34 0 0 0 68 0C76 46 42 4 42 4z" fill="var(--rain)" stroke="var(--ink)" stroke-width="5"/><circle cx="30" cy="62" r="5" fill="#fff"/><circle cx="54" cy="62" r="5" fill="#fff"/><circle cx="31" cy="63" r="2.5" fill="#12304A"/><circle cx="55" cy="63" r="2.5" fill="#12304A"/><path d="M32 76q10 8 20 0" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+      <div><b>Water Wonder Trail</b><small>Our Wondrous World · Class 3 · Chapter 7</small></div>
+    </div>
+    <span class="pill" id="totalStars" aria-live="polite">💧 0 / 36</span>
+    <button class="iconbtn" id="smallerBtn" aria-label="Make everything smaller">A−</button>
+    <button class="iconbtn" id="biggerBtn" aria-label="Make everything bigger">A+</button>
+    <button class="iconbtn" id="fullBtn">Full screen</button>
+    <button class="iconbtn" id="soundBtn" aria-pressed="true">Sound on</button>
+    <button class="iconbtn" id="teacherBtn">Teacher guide</button>
+  </header>
+  <main id="app"></main>
+</div>
+
+<dialog id="teacher">
+  <div class="dlg">
+    <h2>Teacher guide</h2>
+    <p style="margin:0;color:var(--muted)">Twelve stops follow Chapter 7 "Water – A Precious Gift" (pp. 86–99) in order, in four stretches: Here Comes the Rain, Where Does Rainwater Go?, Water at Home, and Every Drop Counts. Children earn up to 3 drops per stop for first-try answers. Questions shuffle each time, so stops can be replayed.</p>
+    <div class="tablewrap"><table id="tguide"><thead><tr><th>Stop</th><th>Book page</th><th>Children will…</th></tr></thead><tbody></tbody></table></div>
+    <p style="margin:0;color:var(--muted)"><b>As the book advises:</b> the water cycle is introduced only in Class 4, so these games only ask children to notice that water on hard surfaces dries up in the sun, and that rainwater soaking into the soil fills our wells. Pair the games with the real activities: watching the rain, visiting a nearby water source, the vessel exhibition and making a birdbath.</p>
+    <p style="margin:0;color:var(--muted)"><b>On a smart board:</b> press <b>Full screen</b>. The page enlarges itself to fit the board; use <b>A+</b> / <b>A−</b> if needed. Drops are saved on this device only.</p>
+    <div><button class="go" id="closeTeacher">Close</button></div>
+  </div>
+</dialog>
+
+<script>
+(() => {
+"use strict";
+const NS = "http://www.w3.org/2000/svg";
+const $ = (s, el = document) => el.querySelector(s);
+function S(tag, attrs = {}, kids = []) {
+  const el = document.createElementNS(NS, tag);
+  for (const k in attrs) el.setAttribute(k, attrs[k]);
+  for (const c of [].concat(kids)) if (c) el.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+  return el;
+}
+function H(tag, attrs = {}, kids = []) {
+  const el = document.createElement(tag);
+  for (const k in attrs) {
+    if (attrs[k] == null) continue;
+    if (k === "text") el.textContent = attrs[k];
+    else if (k === "html") el.innerHTML = attrs[k];
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), attrs[k]);
+    else el.setAttribute(k, attrs[k]);
+  }
+  for (const c of [].concat(kids)) if (c) el.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+  return el;
+}
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const rnd = (a, b) => a + Math.random() * (b - a);
+
+const KEY = "water-wonder-trail-v1";
+let store = { stars: {}, name: "", sound: true, size: 1 };
+try { const raw = localStorage.getItem(KEY); if (raw) store = Object.assign(store, JSON.parse(raw)); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} };
+
+let actx = null;
+function tone(freqs, dur = 0.12, type = "triangle") {
+  if (!store.sound) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    let t = actx.currentTime;
+    for (const f of freqs) {
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = type; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.18, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + dur + 0.02); t += dur * 0.9;
+    }
+  } catch (e) {}
+}
+const sGood = () => tone([587, 740, 880], 0.11);
+const sBad = () => tone([300, 220], 0.16, "sawtooth");
+const sTap = () => tone([880, 1175], 0.04, "sine");
+const sWin = () => tone([523, 659, 784, 1046, 784, 1046], 0.13);
+function speak(text) {
+  try {
+    if (!("speechSynthesis" in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = 0.9; u.lang = "en-IN";
+    const vs = speechSynthesis.getVoices();
+    const v = vs.find(v => /en-IN/i.test(v.lang)) || vs.find(v => /^en/i.test(v.lang));
+    if (v) u.voice = v;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+/* ---------------- pictures ---------------- */
+const INK = "#12304A";
+function rainLayer(svg, { n = 30, w = 300, h = 180, len = 14, width = 2.5, slant = 0, speed = 0.7, color = "#3D8FD1" } = {}) {
+  const g = S("g", { transform: slant ? `skewX(${slant})` : "", "pointer-events": "none" });
+  for (let i = 0; i < n; i++) {
+    const x = rnd(-40, w + 40), y = rnd(-20, h);
+    const line = S("line", { x1: x, y1: y, x2: x, y2: y + len, stroke: color, "stroke-width": width, "stroke-linecap": "round", class: "drop", style: `animation-duration:${(speed * rnd(.85, 1.15)).toFixed(2)}s;animation-delay:${(-rnd(0, 2)).toFixed(2)}s` });
+    g.appendChild(line);
+  }
+  svg.appendChild(g);
+  return g;
+}
+function boondi(size = 120) {
+  return S("svg", { viewBox: "0 0 84 96", width: size, "aria-hidden": "true" }, [
+    S("path", { d: "M42 4C42 4 8 46 8 64a34 34 0 0 0 68 0C76 46 42 4 42 4z", fill: "#3D8FD1", stroke: INK, "stroke-width": 4 }),
+    S("ellipse", { cx: 26, cy: 48, rx: 5, ry: 9, fill: "#fff", opacity: .55 }),
+    S("circle", { cx: 30, cy: 62, r: 5, fill: "#fff" }), S("circle", { cx: 54, cy: 62, r: 5, fill: "#fff" }),
+    S("circle", { cx: 31, cy: 63, r: 2.5, fill: INK }), S("circle", { cx: 55, cy: 63, r: 2.5, fill: INK }),
+    S("path", { d: "M32 76q10 8 20 0", stroke: "#fff", "stroke-width": 4, fill: "none", "stroke-linecap": "round" }),
+  ]);
+}
+function cloud(x, y, s = 1, fill = "#A9B9C7") {
+  return S("g", { transform: `translate(${x} ${y}) scale(${s})` }, [
+    S("path", { d: "M10 40a18 18 0 0 1 10-33 24 24 0 0 1 44 4 16 16 0 0 1 16 29z", fill, stroke: INK, "stroke-width": 3 }),
+  ]);
+}
+function sun(x, y, r = 18) {
+  const g = S("g", { transform: `translate(${x} ${y})` });
+  for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; g.appendChild(S("line", { x1: Math.cos(a) * (r + 5), y1: Math.sin(a) * (r + 5), x2: Math.cos(a) * (r + 13), y2: Math.sin(a) * (r + 13), stroke: "#F2B01E", "stroke-width": 4, "stroke-linecap": "round" })); }
+  g.appendChild(S("circle", { r, fill: "#F2B01E", stroke: INK, "stroke-width": 3 }));
+  return g;
+}
+const SKY = "#CFE6F5";
+function scene(kind) {
+  const svg = S("svg", { viewBox: "0 0 300 180", width: 400, role: "img", "aria-label": kind });
+  svg.appendChild(S("rect", { width: 300, height: 180, rx: 14, fill: kind === "sunny" ? "#DDF0FB" : SKY }));
+  const clip = S("clipPath", { id: "c" + kind }, [S("rect", { width: 300, height: 180, rx: 14 })]);
+  svg.appendChild(clip);
+  const g = S("g", { "clip-path": `url(#c${kind})` }); svg.appendChild(g);
+  if (kind === "soil") {
+    g.appendChild(S("rect", { y: 120, width: 300, height: 60, fill: "#8A5A35" }));
+    for (let i = 0; i < 9; i++) g.appendChild(S("path", { d: `M${20 + i * 33} 122l4-12 4 12M${26 + i * 33} 122l6-16 2 16`, stroke: "#2F8B4E", "stroke-width": 3, fill: "none" }));
+    g.appendChild(S("path", { d: "M150 120v-40", stroke: "#2F8B4E", "stroke-width": 5 }));
+    g.appendChild(S("ellipse", { cx: 136, cy: 92, rx: 16, ry: 8, fill: "#3DA35F", transform: "rotate(-30 136 92)" }));
+    g.appendChild(S("ellipse", { cx: 164, cy: 86, rx: 16, ry: 8, fill: "#3DA35F", transform: "rotate(30 164 86)" }));
+    for (let i = 0; i < 6; i++) g.appendChild(S("circle", { cx: 30 + i * 48, cy: 150 + (i % 2) * 12, r: 3, fill: "#B07A50" }));
+  } else if (kind === "road") {
+    g.appendChild(S("rect", { y: 110, width: 300, height: 70, fill: "#7E8A94" }));
+    g.appendChild(S("path", { d: "M0 145h40m30 0h40m30 0h40m30 0h40m30 0h40", stroke: "#fff", "stroke-width": 4 }));
+    g.appendChild(S("ellipse", { cx: 160, cy: 132, rx: 60, ry: 14, fill: "#4D6B85", stroke: "#3D5568", "stroke-width": 2 }));
+    g.appendChild(S("ellipse", { cx: 140, cy: 129, rx: 16, ry: 3, fill: "#fff", opacity: .5 }));
+  } else if (kind === "roof") {
+    g.appendChild(S("rect", { y: 150, width: 300, height: 30, fill: "#7E8A94" }));
+    g.appendChild(S("rect", { x: 80, y: 90, width: 120, height: 60, fill: "#F3D9A8", stroke: INK, "stroke-width": 3 }));
+    g.appendChild(S("path", { d: "M60 100L170 50 240 96", fill: "#9AA7B2", stroke: INK, "stroke-width": 3 }));
+    g.appendChild(S("rect", { x: 125, y: 112, width: 26, height: 38, fill: "#B9562D" }));
+    for (let i = 0; i < 4; i++) g.appendChild(S("path", { d: `M${70 - i * 4} ${104 + i * 12}q-3 6 0 10`, stroke: "#3D8FD1", "stroke-width": 3, fill: "none" }));
+    g.appendChild(S("path", { d: "M10 165q60-8 120 0", stroke: "#3D8FD1", "stroke-width": 5, fill: "none" }));
+  } else if (kind === "hill") {
+    g.appendChild(S("path", { d: "M0 70Q120 60 220 150L300 180H0z", fill: "#5DAE6B", stroke: INK, "stroke-width": 3 }));
+    g.appendChild(S("path", { d: "M210 145Q250 175 300 160V180H190z", fill: "#3D8FD1" }));
+    for (let i = 0; i < 4; i++) g.appendChild(S("path", { d: `M${60 + i * 40} ${82 + i * 16}q14 6 22 14`, stroke: "#3D8FD1", "stroke-width": 3, fill: "none", "stroke-linecap": "round" }));
+  } else if (kind === "sunny") {
+    g.appendChild(sun(240, 40, 20));
+    g.appendChild(S("rect", { y: 120, width: 300, height: 60, fill: "#8D98A1" }));
+    g.appendChild(S("ellipse", { cx: 120, cy: 142, rx: 34, ry: 7, fill: "#6E8FAA", opacity: .8 }));
+    for (let i = 0; i < 3; i++) g.appendChild(S("path", { d: `M${100 + i * 20} 128q-6-10 0-20q6-10 0-20`, stroke: "#9FB6C8", "stroke-width": 3, fill: "none", opacity: .8 }));
+  }
+  if (kind !== "sunny") { g.appendChild(cloud(20, 6, .9)); g.appendChild(cloud(170, 0, 1.1)); rainLayer(g, { n: 26, len: 12, speed: .8 }); }
+  return svg;
+}
+/* water sources */
+function source(kind) {
+  const svg = S("svg", { viewBox: "0 0 160 140", role: "img", "aria-label": "picture" });
+  const add = (...e) => e.forEach(x => svg.appendChild(x));
+  if (kind === "tap") {
+    add(S("rect", { x: 0, y: 30, width: 30, height: 70, fill: "#E8D3B0", stroke: INK, "stroke-width": 3 }),
+      S("path", { d: "M30 55h60a14 14 0 0 1 14 14v12h-16v-8H30z", fill: "#AEB8C1", stroke: INK, "stroke-width": 3 }),
+      S("rect", { x: 60, y: 38, width: 10, height: 18, fill: "#AEB8C1", stroke: INK, "stroke-width": 3 }),
+      S("rect", { x: 48, y: 30, width: 34, height: 9, rx: 4, fill: "#C2384F", stroke: INK, "stroke-width": 3 }),
+      S("path", { d: "M96 90c0 0-8 12-8 18a8 8 0 0 0 16 0c0-6-8-18-8-18z", fill: "#3D8FD1", stroke: INK, "stroke-width": 2 }));
+  } else if (kind === "pump") {
+    add(S("rect", { x: 66, y: 40, width: 18, height: 90, fill: "#4C6B4F", stroke: INK, "stroke-width": 3 }),
+      S("path", { d: "M84 62h26v10h-16", fill: "#4C6B4F", stroke: INK, "stroke-width": 3 }),
+      S("path", { d: "M70 44L22 22", stroke: INK, "stroke-width": 8, "stroke-linecap": "round" }),
+      S("circle", { cx: 74, cy: 44, r: 6, fill: "#AEB8C1", stroke: INK, "stroke-width": 3 }),
+      S("path", { d: "M96 96h36l-5 34h-26z", fill: "#3D8FD1", stroke: INK, "stroke-width": 3 }),
+      S("path", { d: "M106 74v16", stroke: "#3D8FD1", "stroke-width": 5, "stroke-dasharray": "4 4" }),
+      S("rect", { x: 40, y: 128, width: 100, height: 8, fill: "#8D98A1" }));
+  } else if (kind === "well") {
+    add(S("rect", { x: 30, y: 80, width: 100, height: 52, fill: "#C9875E", stroke: INK, "stroke-width": 3 }),
+      S("path", { d: "M30 98h100M30 116h100M55 80v18M85 80v18M105 98v18M70 98v18M45 116v16M95 116v16", stroke: INK, "stroke-width": 2 }),
+      S("ellipse", { cx: 80, cy: 80, rx: 50, ry: 10, fill: "#2E5B80", stroke: INK, "stroke-width": 3 }),
+      S("path", { d: "M36 80V20M124 80V20M30 20h100", stroke: "#7A4E2D", "stroke-width": 7, "stroke-linecap": "round" }),
+      S("circle", { cx: 80, cy: 28, r: 9, fill: "#AEB8C1", stroke: INK, "stroke-width": 3 }),
+      S("path", { d: "M80 37v26", stroke: INK, "stroke-width": 2 }),
+      S("path", { d: "M70 62h20l-3 14h-14z", fill: "#AEB8C1", stroke: INK, "stroke-width": 2.5 }));
+  } else if (kind === "tanker") {
+    add(S("rect", { x: 10, y: 50, width: 98, height: 48, rx: 22, fill: "#3D8FD1", stroke: INK, "stroke-width": 3 }),
+      S("text", { x: 59, y: 80, "text-anchor": "middle", "font-size": 15, "font-weight": 800, fill: "#fff", "font-family": "Lexend, sans-serif" }, ["WATER"]),
+      S("path", { d: "M110 60h26l16 20v26h-42z", fill: "#F2B01E", stroke: INK, "stroke-width": 3 }),
+      S("path", { d: "M118 66h16l10 14h-26z", fill: "#CFE6F5", stroke: INK, "stroke-width": 2 }),
+      S("rect", { x: 6, y: 96, width: 146, height: 10, fill: "#555", stroke: INK, "stroke-width": 2 }),
+      ...[34, 80, 132].map(x => S("circle", { cx: x, cy: 112, r: 12, fill: "#333", stroke: INK, "stroke-width": 3 })));
+  } else if (kind === "river") {
+    add(S("rect", { width: 160, height: 140, rx: 12, fill: "#7CC48A" }),
+      S("path", { d: "M0 40C50 30 60 80 100 75S140 110 160 105V140H120C110 120 70 125 40 100S10 80 0 85z", fill: "#3D8FD1", stroke: INK, "stroke-width": 3 }),
+      S("path", { d: "M30 60q10-4 20 0M90 95q10-4 20 0M120 118q8-4 16 0", stroke: "#fff", "stroke-width": 3, fill: "none" }),
+      S("circle", { cx: 130, cy: 30, r: 14, fill: "#2F8B4E" }), S("rect", { x: 127, y: 40, width: 6, height: 14, fill: "#7A4E2D" }));
+  } else if (kind === "roofTank") {
+    add(S("rect", { x: 30, y: 70, width: 100, height: 64, fill: "#F3D9A8", stroke: INK, "stroke-width": 3 }),
+      S("rect", { x: 26, y: 62, width: 108, height: 10, fill: "#C9875E", stroke: INK, "stroke-width": 3 }),
+      S("path", { d: "M70 26h40v36H70z", fill: "#2D3B45", stroke: INK, "stroke-width": 3 }),
+      S("ellipse", { cx: 90, cy: 26, rx: 20, ry: 6, fill: "#45555F", stroke: INK, "stroke-width": 3 }),
+      S("path", { d: "M106 62v40h-20", stroke: "#AEB8C1", "stroke-width": 5, fill: "none" }),
+      S("rect", { x: 46, y: 90, width: 24, height: 44, fill: "#B9562D" }));
+  } else if (kind === "pond") {
+    add(S("rect", { width: 160, height: 140, rx: 12, fill: "#9BD3A6" }),
+      S("ellipse", { cx: 80, cy: 82, rx: 66, ry: 38, fill: "#3D8FD1", stroke: INK, "stroke-width": 3 }),
+      S("ellipse", { cx: 60, cy: 76, rx: 12, ry: 6, fill: "#2F8B4E" }), S("ellipse", { cx: 104, cy: 92, rx: 10, ry: 5, fill: "#2F8B4E" }),
+      S("circle", { cx: 62, cy: 72, r: 4, fill: "#F09AB5" }),
+      S("path", { d: "M20 40v-20M26 42v-26M140 44v-22", stroke: "#2F8B4E", "stroke-width": 4 }));
+  }
+  return svg;
+}
+/* vessels */
+function vessel(kind) {
+  const svg = S("svg", { viewBox: "0 0 120 140", role: "img", "aria-label": "vessel" });
+  const add = (...e) => e.forEach(x => svg.appendChild(x));
+  const lota = (c, hi) => add(
+    S("path", { d: "M44 30h32l-6 18c22 6 30 22 28 42-3 24-22 38-38 38S25 114 22 90c-2-20 6-36 28-42z", fill: c, stroke: INK, "stroke-width": 3 }),
+    S("path", { d: "M38 26h44", stroke: INK, "stroke-width": 7, "stroke-linecap": "round" }),
+    S("path", { d: "M38 26h44", stroke: c, "stroke-width": 3.5, "stroke-linecap": "round" }),
+    S("ellipse", { cx: 42, cy: 82, rx: 6, ry: 18, fill: hi, opacity: .6 }));
+  if (kind === "clay") add(
+    S("path", { d: "M44 22h32v12c26 8 34 30 32 50-3 28-26 44-48 44S15 112 12 84c-2-20 6-42 32-50z", fill: "#B9562D", stroke: INK, "stroke-width": 3 }),
+    S("rect", { x: 40, y: 16, width: 40, height: 9, rx: 4, fill: "#B9562D", stroke: INK, "stroke-width": 3 }),
+    S("path", { d: "M18 70q42 14 84 0M16 84q44 14 88 0", stroke: "#F3E2C8", "stroke-width": 3, fill: "none" }));
+  else if (kind === "surahi") add(
+    S("path", { d: "M52 14h16v44c22 6 30 22 28 40-2 20-18 32-36 32s-34-12-36-32c-2-18 6-34 28-40z", fill: "#C46A3F", stroke: INK, "stroke-width": 3 }),
+    S("path", { d: "M46 12h28", stroke: INK, "stroke-width": 7, "stroke-linecap": "round" }),
+    S("path", { d: "M30 96q30 10 60 0", stroke: "#F3E2C8", "stroke-width": 3, fill: "none" }),
+    S("path", { d: "M52 40h16M52 48h16", stroke: "#F3E2C8", "stroke-width": 2.5 }));
+  else if (kind === "copper") lota("#C2703D", "#F5C49B");
+  else if (kind === "brass") lota("#D4A72C", "#FFF1B0");
+  else if (kind === "steel") add(
+    S("rect", { x: 18, y: 44, width: 84, height: 82, rx: 10, fill: "#CBD4DB", stroke: INK, "stroke-width": 3 }),
+    S("path", { d: "M14 44q46-22 92 0z", fill: "#DDE4EA", stroke: INK, "stroke-width": 3 }),
+    S("circle", { cx: 60, cy: 30, r: 6, fill: "#DDE4EA", stroke: INK, "stroke-width": 3 }),
+    S("rect", { x: 30, y: 54, width: 8, height: 64, rx: 4, fill: "#fff", opacity: .8 }),
+    S("path", { d: "M80 54v64", stroke: "#fff", "stroke-width": 3, opacity: .7 }));
+  else if (kind === "aluminium") add(
+    S("path", { d: "M22 50h76v66c0 8-6 12-12 12H34c-6 0-12-4-12-12z", fill: "#A3AAB0", stroke: INK, "stroke-width": 3 }),
+    S("path", { d: "M14 50h92", stroke: INK, "stroke-width": 6, "stroke-linecap": "round" }),
+    S("path", { d: "M22 64H8v14h14M98 64h14v14H98", fill: "none", stroke: INK, "stroke-width": 4 }),
+    S("path", { d: "M44 80q6 6 0 12", stroke: "#7D858B", "stroke-width": 3, fill: "none" }));
+  else if (kind === "glass") add(
+    S("path", { d: "M50 10h20v16c0 6 16 12 16 28v68c0 6-4 10-10 10H44c-6 0-10-4-10-10V54c0-16 16-22 16-28z", fill: "#CFEAF7", "fill-opacity": .6, stroke: INK, "stroke-width": 3 }),
+    S("path", { d: "M36 76h48v52c0 2-2 4-4 4H40c-2 0-4-2-4-4z", fill: "#7FC1EA", opacity: .55 }),
+    S("rect", { x: 40, y: 56, width: 6, height: 66, rx: 3, fill: "#fff", opacity: .9 }),
+    S("rect", { x: 48, y: 4, width: 24, height: 8, rx: 3, fill: "#9AA7B2", stroke: INK, "stroke-width": 2 }));
+  else if (kind === "plastic") add(
+    S("path", { d: "M50 16h20v10c0 6 18 10 18 24v74c0 6-4 10-10 10H42c-6 0-10-4-10-10V50c0-14 18-18 18-24z", fill: "#7CC3F0", stroke: INK, "stroke-width": 3 }),
+    S("rect", { x: 46, y: 4, width: 28, height: 14, rx: 3, fill: "#1E7FC2", stroke: INK, "stroke-width": 3 }),
+    S("path", { d: "M32 70h56M32 96h56", stroke: "#1E7FC2", "stroke-width": 4 }),
+    S("rect", { x: 40, y: 76, width: 40, height: 16, fill: "#fff", stroke: INK, "stroke-width": 2 }));
+  else if (kind === "bucket") add(
+    S("path", { d: "M14 50h92l-12 80H26z", fill: "#D64545", stroke: INK, "stroke-width": 3 }),
+    S("path", { d: "M14 50q46-56 92 0", fill: "none", stroke: INK, "stroke-width": 4 }),
+    S("path", { d: "M10 50h100", stroke: INK, "stroke-width": 6, "stroke-linecap": "round" }),
+    S("path", { d: "M20 66h80", stroke: "#B03030", "stroke-width": 3 }));
+  return svg;
+}
+
+/* ---------------- engine ---------------- */
+const app = $("#app");
+let current = null;
+const totalStars = () => Object.values(store.stars).reduce((s, v) => s + v, 0);
+const updateTotal = () => { $("#totalStars").textContent = `💧 ${totalStars()} / ${GAMES.length * 3}`; };
+const starsText = n => "💧".repeat(n) + `<i>${"💧".repeat(3 - n)}</i>`;
+
+function startGame(game) { current = { game, rounds: game.make(), i: 0, results: [] }; window.scrollTo({ top: 0 }); renderRound(); }
+function renderRound() {
+  const { game, rounds, i } = current;
+  const round = rounds[i];
+  let missed = false, solved = false;
+  app.innerHTML = "";
+  const dots = H("div", { class: "dots", "aria-label": `Question ${i + 1} of ${rounds.length}` });
+  rounds.forEach((_, k) => dots.appendChild(H("i", { class: k < i ? (current.results[k] ? "done" : "miss") : k === i ? "now" : "" })));
+  app.appendChild(H("div", { class: "gamehead" }, [H("button", { class: "iconbtn", text: "← All stops", onclick: home }), H("h2", { text: game.title }), dots]));
+  const promptP = H("p", { html: round.prompt });
+  const board = H("section", { class: "board play" });
+  board.appendChild(H("div", { class: "prompt" }, [promptP, H("button", { class: "say", text: "🔊 Read", "aria-label": "Read the question aloud", onclick: () => speak(promptP.textContent) })]));
+  const stage = H("div", { class: "stage" });
+  const fb = H("div", { class: "feedback info", "aria-live": "polite", text: round.hint || "Take your time. You can try again if you miss." });
+  board.append(stage, fb);
+  app.appendChild(board);
+  const ctx = {
+    setPrompt(html) { promptP.innerHTML = html; },
+    ok(msg) {
+      if (solved) return; solved = true; sGood();
+      current.results[i] = !missed;
+      if (round.after) round.after();
+      fb.className = "feedback good pop"; fb.innerHTML = "";
+      fb.append(H("span", { html: "<b>Well done!</b> " + (msg || "") }));
+      const last = i === rounds.length - 1;
+      const nb = H("button", { class: "go", text: last ? "See my drops" : "Next →", onclick: () => { if (last) finish(); else { current.i++; renderRound(); } } });
+      fb.append(nb); nb.focus({ preventScroll: true });
+    },
+    bad(msg) {
+      if (solved) return; missed = true; sBad();
+      fb.className = "feedback bad"; fb.innerHTML = "";
+      fb.append(H("span", { html: msg || "Not quite. Think again and try once more." }));
+      fb.style.animation = "none"; void fb.offsetWidth; fb.style.animation = "shake .35s";
+    },
+    info(msg) { if (!solved) { fb.className = "feedback info"; fb.innerHTML = msg; } },
+    get solved() { return solved; },
+  };
+  round.render(stage, ctx);
+}
+function finish() {
+  const { game, results } = current;
+  const n = results.filter(Boolean).length, tot = results.length, ratio = n / tot;
+  const stars = ratio >= 0.85 ? 3 : ratio >= 0.55 ? 2 : 1;
+  store.stars[game.id] = Math.max(store.stars[game.id] || 0, stars); save(); updateTotal(); sWin();
+  app.innerHTML = "";
+  const next = GAMES[GAMES.indexOf(game) + 1];
+  const msg = stars === 3 ? "Super! You are a true water friend." : stars === 2 ? "Good work! Play again to fill all 3 drops." : "Nice try! Play again and you will get better.";
+  app.appendChild(H("section", { class: "board" }, [H("div", { class: "result" }, [
+    boondi(110),
+    H("h2", { text: game.title, style: "font-size:1.8rem" }),
+    H("div", { class: "bigstars pop", html: starsText(stars) }),
+    H("p", { text: `${n} of ${tot} correct on the first try. ${msg}`, style: "margin:0;font-size:1.1rem" }),
+    H("div", { class: "choices" }, [
+      H("button", { class: "go alt", text: "← All stops", onclick: home }),
+      H("button", { class: "go alt", text: "Play again", onclick: () => startGame(game) }),
+      next ? H("button", { class: "go", text: `Next stop: ${next.title} →`, onclick: () => startGame(next) }) : H("button", { class: "go", text: "Back to the trail", onclick: home }),
+    ]),
+  ])]));
+}
+function choiceRow(stage, ctx, options, { stack = false, onRight } = {}) {
+  const row = H("div", { class: "choices" + (stack ? " stack" : "") });
+  options.forEach(o => {
+    const b = H("button", { class: "choice" + (o.card ? " card" : "") + (o.long || stack ? " long" : "") });
+    if (o.emo) b.appendChild(H("span", { class: "emo", "aria-hidden": "true", text: o.emo }));
+    if (o.node) b.appendChild(o.node);
+    if (o.label != null) b.appendChild(H("span", { html: String(o.label) }));
+    b.addEventListener("click", () => {
+      if (ctx.solved) return;
+      if (o.ok) { b.classList.add("good"); row.querySelectorAll("button").forEach(x => x.disabled = true); if (onRight) onRight(o); ctx.ok(o.why); }
+      else { b.classList.remove("bad"); void b.offsetWidth; b.classList.add("bad"); ctx.bad(o.why); }
+    });
+    row.appendChild(b);
+  });
+  stage.appendChild(row);
+  return row;
+}
+function pickAll(stage, ctx, items, okMsg, wrongMsg, missMsg) {
+  const wrap = H("div", { class: "tiles" });
+  const btns = items.map(it => {
+    const b = H("button", { class: "tile", "aria-pressed": "false" }, [H("span", { class: "emo", "aria-hidden": "true", text: it.emo }), H("span", { text: it.label })]);
+    b.addEventListener("click", () => { if (ctx.solved) return; sTap(); b.classList.remove("wrongpick"); b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") === "true" ? "false" : "true"); });
+    wrap.appendChild(b); return b;
+  });
+  stage.appendChild(wrap);
+  stage.appendChild(H("button", { class: "go", text: "Check", onclick: () => {
+    if (ctx.solved) return;
+    let wrong = 0, miss = 0;
+    btns.forEach((b, k) => { const on = b.getAttribute("aria-pressed") === "true"; b.classList.remove("wrongpick"); if (on && !items[k].ok) { wrong++; b.classList.add("wrongpick"); } if (!on && items[k].ok) miss++; });
+    if (!wrong && !miss) { btns.forEach(b => b.disabled = true); ctx.ok(okMsg); }
+    else if (wrong) ctx.bad(wrongMsg);
+    else ctx.bad(missMsg(miss));
+  } }));
+}
+function orderGame(stage, ctx, steps, doneMsg) {
+  const path = H("div", { class: "path" });
+  const slots = steps.map(() => { const s = H("div", { class: "slot", text: "…" }); path.appendChild(s); return s; });
+  const pool = H("div", { class: "pool" });
+  let at = 0;
+  shuffle(steps.map((t, k) => ({ t, k }))).forEach(({ t, k }) => {
+    const b = H("button", { class: "choice long", text: t });
+    b.addEventListener("click", () => {
+      if (ctx.solved) return;
+      if (k === at) { sTap(); slots[at].className = "step pop"; slots[at].textContent = t; b.remove(); at++; if (at === steps.length) ctx.ok(doneMsg); else ctx.info(`Good! What happens next? (${steps.length - at} more)`); }
+      else { b.classList.remove("bad"); void b.offsetWidth; b.classList.add("bad"); ctx.bad(at === 0 ? "That is not the first step. Where does all water come from first?" : "Not yet. Think: what happens just after the last step?"); }
+    });
+    pool.appendChild(b);
+  });
+  stage.append(path, pool);
+}
+/* sorter: each card is a round; bins keep their counts across rounds */
+function sortRounds(cards, bins, promptFn, hint) {
+  const counts = bins.map(() => 0);
+  return cards.map(c => ({
+    prompt: promptFn(c), hint,
+    render(stage, ctx) {
+      stage.appendChild(H("div", { class: "card-big pop" }, [H("span", { class: "emo", "aria-hidden": "true", text: c.emo }), H("b", { text: c.label })]));
+      const row = H("div", { class: "bins" });
+      bins.forEach((bn, k) => {
+        const cnt = H("small", { text: `${counts[k]} sorted` });
+        const b = H("button", { class: "bin" }, [H("span", { class: "emo", "aria-hidden": "true", text: bn.emo }), H("span", { text: bn.label }), cnt]);
+        b.addEventListener("click", () => {
+          if (ctx.solved) return;
+          if (k === c.bin) { counts[k]++; cnt.textContent = `${counts[k]} sorted`; b.classList.add("good"); ctx.ok(c.why); }
+          else { b.classList.remove("bad"); void b.offsetWidth; b.classList.add("bad"); ctx.bad(c.hintBad || "Think again about this one."); }
+        });
+        row.appendChild(b);
+      });
+      stage.appendChild(row);
+    },
+  }));
+}
+
+/* ================= GAMES ================= */
+const GAMES = [];
+
+/* 1. Rain Clues */
+GAMES.push({
+  id: "clues", sec: 0, title: "Will It Rain?", page: "86–87", c1: "#7E93A6",
+  lo: "Solve the rain riddle and use sky clues (clouds, wind, smell of soil) to guess whether it will rain.",
+  art: () => { const s = S("svg", { viewBox: "0 0 100 100" }); s.appendChild(cloud(4, 14, 1.1)); rainLayer(s, { n: 8, w: 100, h: 100, len: 10, speed: 1 }); return s; },
+  make() {
+    const riddle = {
+      prompt: "Riddle time! <b>What comes down, but never goes up?</b>",
+      hint: "Look up at the sky when you think about it.",
+      render(stage, ctx) {
+        const s = S("svg", { viewBox: "0 0 300 180", width: 360, role: "img", "aria-label": "a cloud" });
+        s.appendChild(S("rect", { width: 300, height: 180, rx: 14, fill: SKY })); s.appendChild(cloud(90, 20, 1.5)); stage.appendChild(s);
+        choiceRow(stage, ctx, shuffle([
+          { emo: "🌧️", label: "Rain", ok: true, why: "Rain comes down from the clouds. It does not go back up as rain!" },
+          { emo: "🪁", label: "A kite", ok: false, why: "A kite goes up in the sky too. Try again!" },
+          { emo: "🐦", label: "A bird", ok: false, why: "Birds fly up and down. Try again!" },
+        ]));
+      },
+    };
+    const yes = [
+      { emo: "☁️", label: "Dark grey clouds cover the sky", why: "Dark, heavy clouds often bring rain." },
+      { emo: "🌬️", label: "A cool wind starts blowing", why: "A cool breeze often comes just before rain." },
+      { emo: "🦚", label: "Peacocks dance and call loudly", why: "Many elders say peacocks dance when rain is coming." },
+      { emo: "🌱", label: "We smell wet soil in the air", why: "The smell of wet soil tells us it is raining somewhere close." },
+      { emo: "⚡", label: "Lightning and thunder", why: "Thunder and lightning come with rain clouds." },
+      { emo: "🐜", label: "Ants carry their eggs to a higher place", why: "Elders say ants move to higher places before rain." },
+    ].map(c => ({ ...c, bin: 0, hintBad: "Is this a sign of rain clouds coming?" }));
+    const no = [
+      { emo: "☀️", label: "Hot, bright sun all day", why: "A hot, bright sky usually means no rain." },
+      { emo: "🔵", label: "Clear blue sky with no clouds", why: "No clouds means no rain." },
+      { emo: "⭐", label: "Many stars shine at night", why: "If we see many stars, the sky has no rain clouds." },
+      { emo: "🌤️", label: "Only a few small white clouds", why: "Small white clouds do not usually bring rain." },
+    ].map(c => ({ ...c, bin: 1, hintBad: "Does this sound like rain clouds are near?" }));
+    const cards = shuffle([...shuffle(yes).slice(0, 4), ...shuffle(no).slice(0, 3)]);
+    return [riddle, ...sortRounds(cards, [{ emo: "☔", label: "It may rain" }, { emo: "😎", label: "No rain today" }],
+      () => "Read the clue. Is it a sign of <b>rain</b> or <b>no rain</b>?", "Ask an elder at home how they guess the rain!")];
+  },
+});
+
+/* 2. Rain Watcher */
+GAMES.push({
+  id: "watch", sec: 0, title: "Rain Watcher", page: "87–88", c1: "#3D8FD1",
+  lo: "Observe rain closely: heavy or light, big or small drops, falling straight or slanting with the wind.",
+  art: () => { const s = S("svg", { viewBox: "0 0 100 100" }); rainLayer(s, { n: 14, w: 100, h: 100, len: 14, slant: -20, speed: 1 }); return s; },
+  make() {
+    const kinds = shuffle([
+      { q: "heavy", p: { n: 90, len: 18, width: 2, speed: .45 }, opts: ["Heavy rain", "Light rain"], ans: 0, why: "So many drops! This is heavy rain." },
+      { q: "heavy", p: { n: 14, len: 10, width: 2, speed: 1 }, opts: ["Heavy rain", "Light rain"], ans: 1, why: "Only a few drops are falling. This is light rain, a drizzle." },
+      { q: "size", p: { n: 22, len: 22, width: 6, speed: .7 }, opts: ["Big drops", "Small drops"], ans: 0, why: "These drops are big and fat." },
+      { q: "size", p: { n: 40, len: 7, width: 1.5, speed: .9 }, opts: ["Big drops", "Small drops"], ans: 1, why: "These drops are tiny, like a fine spray." },
+      { q: "dir", p: { n: 40, len: 16, width: 2.5, slant: -32, speed: .6 }, opts: ["Falling straight down", "Slanting"], ans: 1, why: "The rain is slanting. The wind is pushing the drops." },
+      { q: "dir", p: { n: 40, len: 16, width: 2.5, slant: 0, speed: .6 }, opts: ["Falling straight down", "Slanting"], ans: 0, why: "There is no wind, so the rain falls straight down." },
+    ]).slice(0, 5);
+    const ask = { heavy: "Look at the rain. Is it <b>heavy</b> or <b>light</b>?", size: "Look at the raindrops. Are they <b>big</b> or <b>small</b>?", dir: "How is the rain falling: <b>straight down</b> or <b>slanting</b>?" };
+    const rounds = kinds.map(k => ({
+      prompt: ask[k.q],
+      hint: "Watch the window for a moment before you answer.",
+      render(stage, ctx) {
+        const s = S("svg", { viewBox: "0 0 300 180", width: 420, role: "img", "aria-label": "rain outside a window" });
+        s.appendChild(S("defs", {}, [S("clipPath", { id: "win" }, [S("rect", { x: 10, y: 10, width: 280, height: 160, rx: 8 })])]));
+        s.appendChild(S("rect", { x: 10, y: 10, width: 280, height: 160, rx: 8, fill: "#9DB4C6" }));
+        const g = S("g", { "clip-path": "url(#win)" });
+        g.appendChild(S("rect", { x: 0, y: 138, width: 300, height: 40, fill: "#6E8B72" }));
+        g.appendChild(S("path", { d: "M30 140v-50h40v50M200 140v-70h50v70", fill: "#7D8F9E" }));
+        rainLayer(g, { ...k.p, color: "#E8F4FC" });
+        s.appendChild(g);
+        s.appendChild(S("rect", { x: 10, y: 10, width: 280, height: 160, rx: 8, fill: "none", stroke: "#7A4E2D", "stroke-width": 10 }));
+        s.appendChild(S("path", { d: "M150 10v160M10 90h280", stroke: "#7A4E2D", "stroke-width": 6 }));
+        stage.appendChild(s);
+        choiceRow(stage, ctx, k.opts.map((o, j) => ({ label: o, ok: j === k.ans, why: j === k.ans ? k.why : "Look again carefully at the drops." })));
+      },
+    }));
+    rounds.push({
+      prompt: "You collected rainwater in a vessel. Can you <b>drink</b> it straight away?",
+      render(stage, ctx) {
+        choiceRow(stage, ctx, shuffle([
+          { emo: "🚫", label: "No. It may have dust and dirt in it.", ok: true, why: "Rainwater picks up dust from the air and roofs. We clean water before we drink it." },
+          { emo: "✅", label: "Yes, rainwater is always clean", ok: false, why: "Look at collected rainwater closely. Is it always clean?" },
+        ]), { stack: true });
+      },
+    });
+    return rounds;
+  },
+});
+
+/* 3. Where Did It Go? */
+GAMES.push({
+  id: "where", sec: 1, title: "Where Did It Go?", page: "88–89", c1: "#8A5A35",
+  lo: "Predict what happens to rainwater on different surfaces: it soaks in, collects in puddles, flows away, or dries up in the sun.",
+  art: () => { const s = S("svg", { viewBox: "0 0 100 100" }); s.appendChild(S("rect", { y: 60, width: 100, height: 40, fill: "#8A5A35" })); s.appendChild(S("path", { d: "M30 20v50M50 14v62M70 22v46", stroke: "#3D8FD1", "stroke-width": 5, "stroke-dasharray": "8 6" })); return s; },
+  make() {
+    const O = { soak: "It soaks into the soil", puddle: "It collects in a puddle", flow: "It flows away", dry: "It dries up in the sun" };
+    const list = [
+      { k: "soil", ans: "soak", p: "Rain is falling on a <b>garden with soft soil</b>. What happens to the rainwater?", why: "Soft soil soaks up the water. It helps plants grow and fills the water under the ground." },
+      { k: "road", ans: "puddle", p: "Rain is falling on a <b>road with a hole</b> in it. What happens to the rainwater?", why: "Water cannot sink into the hard road, so it collects in the hole as a puddle." },
+      { k: "roof", ans: "flow", p: "Rain is falling on a <b>sloping roof</b>. What happens to the rainwater?", why: "The roof is hard and sloping, so the water flows down and away." },
+      { k: "hill", ans: "flow", p: "Rain is falling on a <b>hill</b>. What happens to the rainwater?", why: "Water flows down the hill and joins a stream. Streams later join rivers." },
+      { k: "sunny", ans: "dry", p: "The rain has stopped and the <b>sun is out</b>. What happens to the puddle on the road?", why: "Water on hard surfaces slowly dries up in the sun." },
+    ];
+    const rounds = list.map(r => ({
+      prompt: r.p,
+      hint: "Is the surface soft or hard? Flat or sloping?",
+      render(stage, ctx) {
+        stage.appendChild(scene(r.k));
+        const others = shuffle(Object.keys(O).filter(x => x !== r.ans)).slice(0, 2);
+        choiceRow(stage, ctx, shuffle([r.ans, ...others]).map(x => ({ label: O[x], ok: x === r.ans, why: x === r.ans ? r.why : "Think about the surface. Can water sink into it?" })), { stack: true });
+      },
+    }));
+    rounds.push({
+      prompt: "The water in our <b>wells</b> comes from…",
+      render(stage, ctx) {
+        stage.appendChild(source("well"));
+        choiceRow(stage, ctx, shuffle([
+          { label: "Rainwater stored under the ground, between rocks and soil", ok: true, why: "Rainwater soaks into the soil and is stored under the ground. Wells get water from there." },
+          { label: "Water poured in by the tanker", ok: false, why: "Think about where rainwater goes after it soaks into the soil." },
+          { label: "Water from the tap", ok: false, why: "Think about where rainwater goes after it soaks into the soil." },
+        ]), { stack: true });
+      },
+    });
+    return rounds;
+  },
+});
+
+/* 4. Boondi's Journey */
+GAMES.push({
+  id: "journey", sec: 1, title: "Boondi's Journey", page: "89–91", c1: "#1E7FC2",
+  lo: "Put in order how rainwater reaches wells, rivers and the sea, and how water reaches the tap at home.",
+  art: () => boondi(64),
+  make() {
+    return [
+      { p: "Help Boondi the raindrop reach the <b>well</b>. Tap the steps in the right order.", steps: ["Rain falls on the ground", "Water soaks into the soil", "Water is stored under the ground between rocks", "Water fills the well", "We pull it up with a pulley or a pump"], msg: "Rainwater soaking into the soil fills our wells!" },
+      { p: "Help Boondi reach the <b>sea</b>. Tap the steps in the right order.", steps: ["Rain falls on the hills", "Water flows into a small stream", "The stream joins a river", "The river flows into the sea"], msg: "Streams join rivers, and rivers flow to the sea." },
+      { p: "Surya and Barkha followed the pipes. How does water reach the <b>tap</b>? Tap the steps in order.", steps: ["Water is in a river, lake or well", "Big pipes carry it towards our homes", "It fills the tank on the roof", "Pipes bring it down from the tank", "Water comes out of our tap"], msg: "Say a big thank you to everyone who brings water to us!" },
+    ].map(r => ({ prompt: r.p, hint: "Start with where the water comes from first.", render(stage, ctx) { stage.prepend(boondi(70)); orderGame(stage, ctx, r.steps, r.msg); } }));
+  },
+});
+
+/* 5. Water Sources */
+GAMES.push({
+  id: "sources", sec: 1, title: "Where Is Water From?", page: "90–91", c1: "#4C6B4F",
+  lo: "Recognise sources of water and ways it reaches homes: river, pond, well, hand pump, tap, roof tank and tanker.",
+  art: () => source("pump"),
+  make() {
+    const all = [
+      { k: "river", name: "River", why: "A river is a big stream of flowing water." },
+      { k: "pond", name: "Pond", why: "A pond is a small body of still water." },
+      { k: "well", name: "Well with a pulley", why: "We pull up water from a well using a rope and a pulley." },
+      { k: "pump", name: "Hand pump", why: "A hand pump pulls up water from under the ground." },
+      { k: "tap", name: "Tap", why: "Taps get water through pipes." },
+      { k: "roofTank", name: "Tank on the roof", why: "Water is stored in a tank on the roof and comes down to the taps through pipes." },
+      { k: "tanker", name: "Water tanker", why: "In some places, water is delivered in tankers." },
+    ];
+    return shuffle(all).slice(0, 6).map(it => ({
+      prompt: "How do we get water here? <b>Name this water source.</b>",
+      hint: "Look at the picture closely.",
+      render(stage, ctx) {
+        const s = source(it.k); s.setAttribute("width", 260); stage.appendChild(s);
+        const opts = shuffle([it, ...shuffle(all.filter(x => x !== it)).slice(0, 2)]);
+        choiceRow(stage, ctx, opts.map(o => ({ label: o.name, ok: o === it, why: o === it ? it.why : "Look again at the picture." })));
+      },
+    }));
+  },
+});
+
+/* 6. Water Every Day */
+GAMES.push({
+  id: "daily", sec: 2, title: "Water Every Day", page: "92", c1: "#F2B01E",
+  lo: "List daily activities that need water.",
+  art: () => { const s = S("svg", { viewBox: "0 0 100 100" }); s.appendChild(S("text", { x: 50, y: 66, "text-anchor": "middle", "font-size": 54 }, ["🚿"])); return s; },
+  make() {
+    const need = shuffle([
+      { emo: "🥛", label: "Drinking" }, { emo: "🛁", label: "Bathing" }, { emo: "🍲", label: "Cooking food" }, { emo: "👕", label: "Washing clothes" },
+      { emo: "🌱", label: "Watering plants" }, { emo: "🍽️", label: "Washing dishes" }, { emo: "😁", label: "Brushing teeth" }, { emo: "🧼", label: "Washing hands" }, { emo: "🧹", label: "Mopping the floor" },
+    ]);
+    const not = shuffle([{ emo: "📖", label: "Reading a book" }, { emo: "😴", label: "Sleeping" }, { emo: "🎵", label: "Singing a song" }, { emo: "🚲", label: "Riding a cycle" }, { emo: "✏️", label: "Writing" }, { emo: "🏃", label: "Running a race" }, { emo: "🎈", label: "Playing with a balloon" }, { emo: "👂", label: "Listening to a story" }, { emo: "⚽", label: "Kicking a football" }]);
+    const rounds = [0, 1, 2].map(r => {
+      const items = shuffle([...need.slice(r * 3, r * 3 + 3).map(x => ({ ...x, ok: true })), ...not.slice(r * 3, r * 3 + 3).map(x => ({ ...x, ok: false }))]);
+      return {
+        prompt: "Tap every activity that <b>needs water</b>. Then press Check.",
+        hint: "Imagine doing each one. Would you need water?",
+        render(stage, ctx) { pickAll(stage, ctx, items, "We use water for so many things every day!", "A red ring means that activity does not need water. Tap it again to remove it.", m => `Good! ${m === 1 ? "One more activity needs" : m + " more activities need"} water. Look again.`); },
+      };
+    });
+    rounds.push({
+      prompt: "How many mugs of water do you need to <b>brush your teeth</b> if you use a mug?",
+      render(stage, ctx) {
+        choiceRow(stage, ctx, shuffle([
+          { emo: "🥤", label: "About 1 mug", ok: true, why: "One mug is enough! If we keep the tap running, we waste many mugs of water." },
+          { emo: "🌊", label: "A full bucket", ok: false, why: "That is a lot of water just for brushing! Try again." },
+          { emo: "🚰", label: "Keep the tap running", ok: false, why: "A running tap wastes many mugs of water." },
+        ]));
+      },
+    });
+    return rounds;
+  },
+});
+
+/* 7. No Water Today! */
+GAMES.push({
+  id: "nowater", sec: 2, title: "No Water Today!", page: "92–93", c1: "#C2384F",
+  lo: "Understand why we store water, and how people got and stored water long ago.",
+  art: () => vessel("bucket"),
+  make() {
+    const story = "One morning there was no water in the taps. <b>\"The society pipeline burst today!\"</b> said Surya. <b>\"Oh no!\"</b> said Barkha. Then Mother smiled: <b>\"We have stored two buckets of water.\"</b>";
+    const Q = [
+      { p: "Why did Surya and Barkha's family still have some water?", o: [["They had stored two buckets of water", 1, "Storing water helps us when we do not get water all the time."], ["The pipeline was fixed in one minute", 0], ["They bought juice instead", 0]] },
+      { p: "With only two buckets of water, what should the family use it for <b>first</b>?", o: [["Drinking and cooking", 1, "Drinking water and cooking come first. We cannot live without drinking water."], ["Washing the car", 0], ["Playing water games", 0]] },
+      { p: "Many years ago, there were no pipes or taps. What did people do?", o: [["They made vessels to carry and store water", 1, "People made pots and vessels to bring water from rivers and wells, and to store it."], ["They never used water", 0], ["They waited for a tanker", 0]] },
+      { p: "In some places, people do not get water through pipes. How do they get water?", o: [["They bring it from a river or well, or a tanker brings it", 1, "Some families carry water every day. Let us thank the people who bring us water."], ["It comes by post", 0], ["They make it in the kitchen", 0]] },
+    ];
+    return Q.map(q => ({
+      prompt: q.p,
+      hint: "Read the story again if you need to.",
+      render(stage, ctx) {
+        stage.appendChild(H("div", { class: "story", html: story }));
+        choiceRow(stage, ctx, shuffle(q.o.map(([l, ok, why]) => ({ label: l, ok: !!ok, why: ok ? why : "Think about what helped the family that morning." }))), { stack: true });
+      },
+    }));
+  },
+});
+
+/* 8. Vessel Exhibition */
+GAMES.push({
+  id: "vessels", sec: 2, title: "Vessel Exhibition", page: "93–94", c1: "#B9562D",
+  lo: "Name vessels used to store water and the materials they are made of: clay, copper, brass, steel, aluminium, glass and plastic.",
+  art: () => vessel("clay"),
+  make() {
+    const all = [
+      { k: "clay", name: "Clay pot (matka)", why: "A clay pot is made of baked mud. It keeps water cool!" },
+      { k: "surahi", name: "Clay surahi", why: "A surahi has a long, thin neck. It is made of clay." },
+      { k: "copper", name: "Copper vessel", why: "Copper is reddish-brown and shiny." },
+      { k: "brass", name: "Brass pot", why: "Brass is shiny and golden yellow." },
+      { k: "steel", name: "Steel pot", why: "Steel is shiny and silver-grey." },
+      { k: "aluminium", name: "Aluminium pot", why: "Aluminium is light and dull grey." },
+      { k: "glass", name: "Glass bottle", why: "We can see through a glass bottle." },
+      { k: "plastic", name: "Plastic bottle", why: "Plastic bottles are light and have a screw cap." },
+      { k: "bucket", name: "Plastic bucket", why: "A plastic bucket has a handle to carry water." },
+    ];
+    const rounds = shuffle(all).slice(0, 6).map(it => ({
+      prompt: "Welcome to the vessel exhibition! <b>Which vessel is this?</b>",
+      hint: "Look at the colour and the shape.",
+      render(stage, ctx) {
+        const s = vessel(it.k); s.setAttribute("width", 200); stage.appendChild(s);
+        choiceRow(stage, ctx, shuffle([it, ...shuffle(all.filter(x => x !== it)).slice(0, 2)]).map(o => ({ label: o.name, ok: o === it, why: o === it ? it.why : "Look at the colour and shape again." })));
+      },
+    }));
+    rounds.push({
+      prompt: "In hot summers, which vessel keeps drinking water <b>cool</b> without a fridge?",
+      render(stage, ctx) {
+        choiceRow(stage, ctx, shuffle([
+          { card: true, node: vessel("clay"), label: "Clay pot", ok: true, why: "Water slowly seeps through the tiny holes in clay and cools the pot. Ask your grandparents about it!" },
+          { card: true, node: vessel("plastic"), label: "Plastic bottle", ok: false, why: "Plastic does not keep water cool. Which one is made of clay?" },
+          { card: true, node: vessel("steel"), label: "Steel pot", ok: false, why: "Steel gets warm in the sun. Which one is made of clay?" },
+        ]));
+      },
+    });
+    return rounds;
+  },
+});
+
+/* 9. Used Water */
+GAMES.push({
+  id: "reuse", sec: 3, title: "Reuse the Water", page: "95", c1: "#23824A",
+  lo: "Know that used water is dirty and not for drinking or cooking, but can be reused for plants or flushing toilets.",
+  art: () => { const s = S("svg", { viewBox: "0 0 100 100" }); s.appendChild(S("text", { x: 50, y: 66, "text-anchor": "middle", "font-size": 50 }, ["♻️"])); return s; },
+  make() {
+    const dest = [{ id: "plants", emo: "🌱", label: "Watering plants" }, { id: "toilet", emo: "🚽", label: "Flushing the toilet" }, { id: "drink", emo: "🥛", label: "Drinking" }, { id: "cook", emo: "🍲", label: "Cooking" }];
+    const list = [
+      { emo: "🥕", what: "water left after <b>washing vegetables</b>", ok: ["plants", "toilet"] },
+      { emo: "🍚", what: "water left after <b>washing rice and dal</b>", ok: ["plants", "toilet"] },
+      { emo: "🧺", what: "<b>soapy water</b> left after washing clothes", ok: ["toilet"] },
+      { emo: "🧹", what: "dirty water left after <b>mopping the floor</b>", ok: ["toilet"] },
+    ];
+    return list.map(l => ({
+      prompt: `We have some ${l.what}. Where can we <b>reuse</b> it? Tap all the right answers, then Check.`,
+      hint: "Used water is dirty. We must never drink it or cook with it.",
+      render(stage, ctx) {
+        stage.appendChild(H("div", { class: "card-big" }, [H("span", { class: "emo", "aria-hidden": "true", text: l.emo }), H("b", { html: l.what.replace(/<\/?b>/g, "") })]));
+        pickAll(stage, ctx, dest.map(d => ({ ...d, ok: l.ok.includes(d.id) })),
+          l.ok.length === 2 ? "This water is not clean enough to drink, but plants and toilets can use it." : "Soap and dirt can harm plants, so this water is best for flushing toilets.",
+          "Used water is dirty. A red ring means we must not use it for that.",
+          () => "Good! There is one more place where this water can be reused.");
+      },
+    }));
+  },
+});
+
+/* 10. Saver or Waster? */
+GAMES.push({
+  id: "saver", sec: 3, title: "Saver or Waster?", page: "95, 99", c1: "#1E7FC2",
+  lo: "Tell habits that save water from habits that waste or pollute it.",
+  art: () => { const s = S("svg", { viewBox: "0 0 100 100" }); s.appendChild(S("text", { x: 50, y: 66, "text-anchor": "middle", "font-size": 50 }, ["🚰"])); return s; },
+  make() {
+    const save = [
+      { emo: "💧", label: "Taking a bath with a bucket and mug" },
+      { emo: "🔧", label: "Getting a leaking tap fixed" },
+      { emo: "🥤", label: "Using a mug while brushing teeth" },
+      { emo: "🌱", label: "Watering plants with vegetable-washing water" },
+      { emo: "✋", label: "Closing the tap tightly after use" },
+      { emo: "🌧️", label: "Collecting rainwater in big drums" },
+    ].map(c => ({ ...c, bin: 0, why: "That saves water. Every drop counts!", hintBad: "Does this habit save water or waste it?" }));
+    const waste = [
+      { emo: "🚿", label: "Leaving the tap running while brushing" },
+      { emo: "🚗", label: "Washing a car with a running pipe" },
+      { emo: "💦", label: "Letting the roof tank overflow" },
+      { emo: "🗑️", label: "Throwing garbage into a pond" },
+      { emo: "🧴", label: "Adding too much soap to water" },
+      { emo: "🧒", label: "Playing with a water pipe for fun" },
+    ].map(c => ({ ...c, bin: 1, why: c.label.includes("garbage") || c.label.includes("soap") ? "That makes water dirty. Polluting water is also wasting it." : "That wastes a lot of precious water.", hintBad: "Does this habit save water or waste it?" }));
+    const cards = shuffle([...shuffle(save).slice(0, 4), ...shuffle(waste).slice(0, 4)]);
+    return sortRounds(cards, [{ emo: "💙", label: "Water saver" }, { emo: "⚠️", label: "Water waster" }],
+      () => "Is this a <b>water saver</b> or a <b>water waster</b> habit?", "Think: does this use only the water we need?");
+  },
+});
+
+/* 11. Birdbath Builder */
+GAMES.push({
+  id: "birdbath", sec: 3, title: "Birdbath Builder", page: "97", c1: "#5DAE6B",
+  lo: "Follow the steps to make and care for a birdbath that gives water to birds and insects in summer.",
+  art: () => { const s = S("svg", { viewBox: "0 0 100 100" }); s.appendChild(S("path", { d: "M10 50h80q-6 24-40 24T10 50z", fill: "#B9562D", stroke: INK, "stroke-width": 3 })); s.appendChild(S("ellipse", { cx: 50, cy: 52, rx: 36, ry: 6, fill: "#3D8FD1" })); s.appendChild(S("text", { x: 50, y: 40, "text-anchor": "middle", "font-size": 30 }, ["🐦"])); return s; },
+  make() {
+    let built = 0;
+    const drawBath = () => {
+      const s = S("svg", { viewBox: "0 0 300 170", width: 380, role: "img", "aria-label": "birdbath" });
+      s.appendChild(S("rect", { width: 300, height: 170, rx: 14, fill: "#DDF0FB" }));
+      s.appendChild(S("rect", { y: 130, width: 300, height: 40, fill: built >= 4 ? "#7CC48A" : "#C9B79C" }));
+      if (built >= 6) s.appendChild(sun(260, 30, 14));
+      if (built >= 1) s.appendChild(S("path", { d: "M70 100h160q-10 34-80 34T70 100z", fill: "#B9562D", stroke: INK, "stroke-width": 3 }));
+      if (built >= 3) s.appendChild(S("ellipse", { cx: 150, cy: 103, rx: 76, ry: 9, fill: "#3D8FD1", opacity: .9 }));
+      if (built >= 2) [[110, 100, 10], [175, 99, 12], [145, 104, 7]].forEach(([x, y, r]) => s.appendChild(S("ellipse", { cx: x, cy: y, rx: r, ry: r * .6, fill: "#9AA7B2", stroke: INK, "stroke-width": 2 })));
+      if (built >= 2) for (let i = 0; i < 7; i++) s.appendChild(S("circle", { cx: 80 + i * 4, cy: 104 + (i % 2) * 3, r: 3, fill: "#C9C3B6", stroke: INK, "stroke-width": 1 }));
+      if (built >= 6) { s.appendChild(S("text", { x: 120, y: 92, "font-size": 34 }, ["🐦"])); s.appendChild(S("text", { x: 170, y: 86, "font-size": 28 }, ["🐤"])); s.appendChild(S("text", { x: 80, y: 60, "font-size": 22 }, ["🦋"])); }
+      return s;
+    };
+    const steps = [
+      { p: "Step 1: Choose a container for the birdbath.", o: [["A shallow, wide bowl (less than 10 cm deep)", 1, "A shallow bowl is safe. Birds and insects will not drown."], ["A deep bucket full to the top", 0, "Too deep! Small birds and insects could drown."], ["A narrow glass bottle", 0, "Birds cannot drink from a narrow bottle."]] },
+      { p: "Step 2: What should we put in the bowl?", o: [["Some stones for birds to sit on, and small pebbles at the sides", 1, "Stones let birds perch. Small pebbles make sloping sides so insects can drink too."], ["Soap to keep it shiny", 0, "Soap makes water unsafe for birds."], ["Nothing at all", 0, "Birds need a place to perch. What can we add?"]] },
+      { p: "Step 3: What water should we fill it with?", o: [["Fresh, clean water", 1, "Fresh water is safe for birds to drink and cool down."], ["Soapy water from washing clothes", 0, "Soapy water can make birds sick."], ["Salty water", 0, "Birds cannot drink salty water."]] },
+      { p: "Step 4: Where should we keep the birdbath?", o: [["In the yard, balcony or terrace", 1, "Birds can easily find it there."], ["Inside a cupboard", 0, "Birds cannot reach a cupboard!"], ["In the middle of a busy road", 0, "That is not safe for birds or people."]] },
+      { p: "Step 5: How should we take care of it?", o: [["Change the water often and scrub it twice a week with a garden-only scrubber", 1, "Clean water keeps birds healthy. Keep that scrubber only for the garden."], ["Never change the water", 0, "Old water gets dirty. Birds need fresh water."], ["Clean it with the kitchen scrubber", 0, "Do not mix garden and kitchen scrubbers. Keep one only for the garden."]] },
+      { p: "Your birdbath is ready! Which season do birds need it <b>most</b>?", o: [["Hot summer months", 1, "In hot summers, birds need water to drink and to cool down. Look who came to visit!"], ["Rainy season", 0, "In the rainy season, there is water everywhere."], ["Cold winter nights", 0, "Think about when it is very hot and dry."]] },
+    ];
+    return steps.map((st, k) => ({
+      prompt: st.p,
+      hint: "Each correct step builds your birdbath.",
+      render(stage, ctx) {
+        built = k; const holder = H("div"); holder.appendChild(drawBath()); stage.appendChild(holder);
+        this.after = () => { built = k + 1; holder.replaceChildren(drawBath()); };
+        choiceRow(stage, ctx, shuffle(st.o.map(([l, ok, why]) => ({ label: l, ok: !!ok, why }))), { stack: true });
+      },
+    }));
+  },
+});
+
+/* 12. Water Hero Quiz */
+GAMES.push({
+  id: "hero", sec: 3, title: "Water Hero Quiz", page: "96–99", c1: "#7B5BC9",
+  lo: "Explain why water is precious, share drinking water with people and animals, and suggest ways to stop wasting and polluting water.",
+  art: () => boondi(64),
+  make() {
+    const Q = [
+      { p: "We cannot live for more than how many days without drinking water?", o: [["3 days", 1, "Only about 3 days! That is why water is so precious."], ["30 days", 0], ["100 days", 0]] },
+      { p: "A postman comes to your door on a hot day. What is a kind thing to do?", o: [["Offer him clean drinking water", 1, "Offering water to people who serve us is a lovely tradition."], ["Close the door quickly", 0], ["Give him a toy", 0]] },
+      { p: "Why do many places keep pots of water outside homes in summer?", o: [["So that anyone who is thirsty can drink", 1, "This is a kind tradition, especially in hot summer months."], ["To keep the pots clean", 0], ["To wash cars", 0]] },
+      { p: "Why is water called a <b>precious gift</b>?", o: [["All living things need it to survive", 1, "People, animals and plants all need water to live."], ["It is very costly in shops", 0], ["It is only for special days", 0]] },
+      { p: "Which of these makes water <b>dirty</b>?", o: [["Throwing garbage into a pond or river", 1, "Garbage pollutes water. Let us keep our ponds and rivers clean."], ["Keeping a birdbath", 0], ["Covering the water pot", 0]] },
+      { p: "A tap in your school is <b>leaking</b>. What should you do?", o: [["Tell your teacher so it can be fixed", 1, "A leaking tap wastes many buckets of water every day."], ["Ignore it", 0], ["Open it fully", 0]] },
+      { p: "In some places it rains very little. What do people there have to do?", o: [["Walk long distances to get water", 1, "That is why everyone must get clean drinking water anywhere, anytime."], ["Use as much water as they want", 0], ["Nothing at all", 0]] },
+      { p: "Which is the <b>best</b> way to save water while bathing?", o: [["Use a bucket and a mug", 1, "A bucket bath uses much less water than a long shower."], ["Keep the shower on for a long time", 0], ["Fill a big tub every day", 0]] },
+    ];
+    return Q.map(q => ({
+      prompt: q.p,
+      render(stage, ctx) { stage.appendChild(boondi(90)); choiceRow(stage, ctx, shuffle(q.o.map(([l, ok, why]) => ({ label: l, ok: !!ok, why: ok ? why : "Think about what a water hero would do." }))), { stack: true }); },
+    }));
+  },
+});
+
+/* ================= HOME ================= */
+const SECTIONS = [
+  { name: "Here Comes the Rain", note: "Pages 86–88 · rain clues, watching the rain" },
+  { name: "Where Does Rainwater Go?", note: "Pages 88–91 · soil, puddles, streams, wells and taps" },
+  { name: "Water at Home", note: "Pages 92–94 · daily use, storing water, vessels" },
+  { name: "Every Drop Counts", note: "Pages 95–99 · reuse, save, share, birdbath" },
+];
+function heroArt() {
+  const s = S("svg", { viewBox: "0 0 340 230", role: "img", "aria-label": "Boondi the raindrop falling from a cloud towards a clay pot" });
+  s.appendChild(cloud(30, 4, 1.6, "#B8C8D6")); s.appendChild(cloud(170, 18, 1.2, "#C7D5E1"));
+  rainLayer(s, { n: 18, w: 340, h: 230, len: 12, speed: 1.1 });
+  const b = boondi(80); b.setAttribute("x", 120); b.setAttribute("y", 78); b.setAttribute("height", 92); s.appendChild(b);
+  const v = vessel("clay"); v.setAttribute("x", 210); v.setAttribute("y", 120); v.setAttribute("width", 100); v.setAttribute("height", 110); s.appendChild(v);
+  return s;
+}
+function home() {
+  try { speechSynthesis.cancel(); } catch (e) {}
+  current = null; app.innerHTML = "";
+  app.appendChild(H("section", { class: "hero" }, [
+    H("div", {}, [
+      H("h1", { html: "Every <em>drop</em> counts!" }),
+      H("p", { text: "Follow Boondi the raindrop from the sky to the soil, the river, the well and your tap. Finish all 12 stops on the trail and fill 3 drops at each one!" }),
+    ]),
+    heroArt(),
+  ]));
+  SECTIONS.forEach((sec, si) => {
+    app.appendChild(H("div", { class: "section-head" }, [H("span", { class: "num", text: si + 1 }), H("h2", { text: sec.name }), H("span", { text: sec.note })]));
+    const row = H("div", { class: "stalls" });
+    GAMES.filter(g => g.sec === si).forEach(g => {
+      const art = g.art(); art.setAttribute("class", "art"); art.setAttribute("aria-hidden", "true");
+      const st = store.stars[g.id] || 0;
+      const b = H("button", { class: "stall", style: `--c1:${g.c1}`, "aria-label": `${g.title}, ${st} of 3 drops` }, [
+        H("div", { class: "wave" }),
+        H("div", { class: "body" }, [art, H("div", {}, [H("h3", { text: g.title }), H("div", { class: "meta", text: `Book page ${g.page}` }), H("div", { class: "stars", html: starsText(st) })])]),
+      ]);
+      b.addEventListener("click", () => { sTap(); startGame(g); });
+      row.appendChild(b);
+    });
+    app.appendChild(row);
+  });
+  const played = GAMES.filter(g => store.stars[g.id]).length, all = played === GAMES.length;
+  app.appendChild(H("div", { class: "cert-banner" }, [
+    H("p", { html: all ? "<b>You finished the whole trail!</b> Your Jal Mitra (Water Friend) certificate is ready." : `<b>Jal Mitra (Water Friend) certificate</b> · Finish all ${GAMES.length} stops to unlock it. You have played <b>${played}</b> of ${GAMES.length}.` }),
+    H("button", { class: "go" + (all ? "" : " alt"), text: all ? "Open certificate" : "Locked", disabled: all ? null : "", onclick: certificate }),
+  ]));
+}
+function certificate() {
+  app.innerHTML = ""; sWin();
+  const nameEl = H("div", { class: "name", text: store.name || "" });
+  const input = H("input", { id: "childName", placeholder: "Type your name", value: store.name || "", maxlength: 40 });
+  input.addEventListener("input", () => { store.name = input.value; nameEl.textContent = input.value; save(); });
+  const d = new Date().toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
+  app.appendChild(H("button", { class: "iconbtn", text: "← All stops", onclick: home, style: "margin-top:6px" }));
+  const art = boondi(90); art.style.justifySelf = "center";
+  app.appendChild(H("section", { class: "cert pop" }, [
+    art,
+    H("div", { style: "font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:#4E6578", text: "Our Wondrous World · Class 3 · Chapter 7" }),
+    H("h2", { text: "Jal Mitra · Water Friend" }),
+    H("div", { text: "This certificate is proudly given to" }),
+    nameEl,
+    H("div", { html: `for finishing all ${GAMES.length} stops of the Water Wonder Trail and collecting <b>${totalStars()} of ${GAMES.length * 3} drops</b>. You know that every drop counts!` }),
+    H("div", { style: "font-size:.9rem;color:#4E6578", text: d }),
+    H("label", { for: "childName", text: "Your name" }), input,
+  ]));
+}
+
+/* ---------- teacher guide + header controls ---------- */
+const tbody = $("#tguide tbody");
+GAMES.forEach(g => tbody.appendChild(H("tr", {}, [H("td", { html: `<b>${g.title}</b>` }), H("td", { class: "pg", text: g.page }), H("td", { text: g.lo })])));
+$("#teacherBtn").addEventListener("click", () => { const d = $("#teacher"); if (d.showModal) d.showModal(); else d.setAttribute("open", ""); });
+$("#closeTeacher").addEventListener("click", () => { const d = $("#teacher"); if (d.close) d.close(); else d.removeAttribute("open"); });
+const sb = $("#soundBtn");
+const syncSound = () => { sb.setAttribute("aria-pressed", store.sound ? "true" : "false"); sb.textContent = store.sound ? "Sound on" : "Sound off"; };
+sb.addEventListener("click", () => { store.sound = !store.sound; save(); syncSound(); sTap(); });
+syncSound();
+function fit() {
+  const w = window.innerWidth, h = window.innerHeight;
+  let z = w >= 1100 ? Math.min(w / 1180, h / 640) : 1;
+  z = Math.max(1, Math.min(z, 3.2)) * (store.size || 1);
+  document.body.style.zoom = String(Math.round(z * 100) / 100);
+}
+const setSize = f => { store.size = Math.max(0.7, Math.min(1.6, Math.round(((store.size || 1) * f) * 100) / 100)); save(); fit(); };
+$("#biggerBtn").addEventListener("click", () => setSize(1.1));
+$("#smallerBtn").addEventListener("click", () => setSize(1 / 1.1));
+const fullB = $("#fullBtn");
+fullB.addEventListener("click", () => {
+  try {
+    const p = document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+    if (p && p.catch) p.catch(() => { fullB.textContent = "Use F11 for full screen"; });
+  } catch (e) { fullB.textContent = "Use F11 for full screen"; }
+});
+document.addEventListener("fullscreenchange", () => { fullB.textContent = document.fullscreenElement ? "Exit full screen" : "Full screen"; fit(); });
+window.addEventListener("resize", fit);
+document.addEventListener("contextmenu", e => { if (!e.target.closest("input")) e.preventDefault(); });
+fit(); updateTotal(); home();
+})();
+</script>
