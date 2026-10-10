@@ -1,0 +1,1120 @@
+<title>Fair Share Mela</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Lexend:wght@400;500;600&display=swap">
+<style>
+/* Layout: a Maths Mela fairground — chapter sections are rows of stalls; each stall opens a full-width play board. */
+:root {
+  --bg: #EEF5F2;
+  --surface: #FFFFFF;
+  --surface-2: #F6FAF8;
+  --ink: #1E2A3B;
+  --muted: #56666E;
+  --line: #CADBD5;
+  --mango: #F2A516;
+  --mango-soft: #FDEBC4;
+  --leaf: #23875A;
+  --leaf-soft: #D5F0E2;
+  --berry: #C93A63;
+  --berry-soft: #FADCE5;
+  --sky: #3B7FCC;
+  --sky-soft: #DCEAFA;
+  --paper: #FFFDF6;
+  --paratha: #F1C46A;
+  --paratha-edge: #B9802A;
+  --choc: #6B3E26;
+  --choc-edge: #3E2213;
+  --chikki: #D49A4E;
+  --chikki-edge: #8C5C22;
+  --shade: #F2A516;
+  --font-display: "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Lexend", "Segoe UI", system-ui, sans-serif;
+  --r: 18px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111B28; --surface: #1A2738; --surface-2: #213248; --ink: #EAF1EE; --muted: #A2B3BB;
+    --line: #304661; --mango-soft: #4A3912; --leaf: #4CC48C; --leaf-soft: #173D2D; --berry: #F07399;
+    --berry-soft: #4A1C2B; --sky: #78AEEB; --sky-soft: #1C3350; --paper: #F4EEDD; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111B28; --surface: #1A2738; --surface-2: #213248; --ink: #EAF1EE; --muted: #A2B3BB;
+  --line: #304661; --mango-soft: #4A3912; --leaf: #4CC48C; --leaf-soft: #173D2D; --berry: #F07399;
+  --berry-soft: #4A1C2B; --sky: #78AEEB; --sky-soft: #1C3350; --paper: #F4EEDD; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+.wrap { max-width: 980px; margin: 0 auto; padding-inline: 16px; padding-block: 12px 48px; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.1; text-wrap: balance; margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; }
+
+/* Top bar */
+.bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding-block: 8px; }
+.brand { display: flex; align-items: center; gap: 10px; margin-right: auto; }
+.brand svg { width: 42px; height: 42px; flex: none; }
+.brand b { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: -.01em; }
+.brand small { display: block; font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-top: -4px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: var(--surface); border: 1.5px solid var(--line); font-weight: 600; font-size: .9rem; }
+.pill.star { background: var(--mango-soft); border-color: var(--mango); font-variant-numeric: tabular-nums; }
+.iconbtn { border: 1.5px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 12px; font-size: .9rem; font-weight: 600; }
+.iconbtn[aria-pressed="false"] { opacity: .6; }
+
+/* Home */
+.hero { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; align-items: center; padding-block: 18px 8px; }
+.hero h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); font-weight: 800; letter-spacing: -.02em; }
+.hero h1 em { font-style: normal; color: var(--mango); -webkit-text-stroke: 1.5px var(--ink); paint-order: stroke fill; }
+.hero p { color: var(--muted); max-width: 46ch; margin: 10px 0 0; }
+.hero svg { width: 100%; max-width: 340px; justify-self: center; }
+.section-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin: 28px 0 12px; }
+.section-head h2 { font-size: 1.6rem; font-weight: 800; }
+.section-head span { color: var(--muted); font-size: .9rem; }
+.stalls { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+.stall { position: relative; text-align: left; border: 2px solid var(--ink); border-radius: var(--r); background: var(--surface); padding: 0; overflow: hidden; display: flex; flex-direction: column; transition: transform .15s ease, box-shadow .15s ease; box-shadow: 0 4px 0 var(--ink); }
+.stall:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--ink); }
+.stall:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--ink); }
+.awning { height: 18px; background: repeating-linear-gradient(90deg, var(--c1) 0 22px, var(--paper) 22px 44px); border-bottom: 2px solid var(--ink); }
+.stall .body { display: flex; gap: 12px; padding: 12px 14px 14px; align-items: center; }
+.stall .art { width: 64px; height: 64px; flex: none; }
+.stall h3 { font-size: 1.15rem; font-weight: 700; }
+.stall .meta { font-size: .78rem; color: var(--muted); }
+.stall .stars { font-size: 1rem; letter-spacing: 2px; color: var(--mango); margin-top: 2px; }
+.stall .stars i { font-style: normal; color: var(--line); }
+.cert-banner { margin-top: 28px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; padding: 16px 18px; border-radius: var(--r); background: var(--surface); border: 2px dashed var(--mango); }
+.cert-banner p { margin: 0; flex: 1 1 260px; }
+
+/* Game screen */
+.gamehead { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+.gamehead h2 { font-size: 1.6rem; font-weight: 800; margin-right: auto; }
+.dots { display: flex; gap: 6px; flex-wrap: wrap; }
+.dots i { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--ink); background: var(--surface); }
+.dots i.done { background: var(--leaf); }
+.dots i.miss { background: var(--mango); }
+.dots i.now { box-shadow: 0 0 0 3px var(--sky-soft); border-color: var(--sky); }
+.board { margin-top: 12px; background: var(--surface); border: 2px solid var(--ink); border-radius: 22px; padding: 18px; display: grid; gap: 16px; }
+.prompt { display: flex; gap: 12px; align-items: flex-start; }
+.prompt p { margin: 0; font-size: clamp(1.1rem, 2.6vw, 1.35rem); font-weight: 500; flex: 1; min-width: 0; }
+.prompt p b { color: var(--berry); font-weight: 600; }
+.say { flex: none; border: 1.5px solid var(--line); background: var(--surface-2); border-radius: 999px; padding: 6px 12px; font-size: .85rem; font-weight: 600; }
+.stage { display: grid; justify-items: center; gap: 14px; }
+.stage svg { max-width: 100%; height: auto; }
+.choices { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.choice { border: 2px solid var(--ink); background: var(--surface); border-radius: 14px; padding: 10px 18px; font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; box-shadow: 0 3px 0 var(--ink); min-width: 64px; }
+.choice:hover { background: var(--mango-soft); }
+.choice:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+.choice.good { background: var(--leaf-soft); border-color: var(--leaf); }
+.choice.bad { background: var(--berry-soft); border-color: var(--berry); animation: shake .35s; }
+.choice[disabled] { cursor: default; }
+.choice.card { padding: 8px; display: grid; justify-items: center; gap: 4px; font-size: 1rem; }
+.choice.card svg { width: 84px; height: 84px; }
+.go { border: 2px solid var(--ink); background: var(--mango); color: #1E2A3B; border-radius: 14px; padding: 10px 26px; font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; box-shadow: 0 3px 0 var(--ink); }
+.go.alt { background: var(--surface); color: var(--ink); }
+.feedback { min-height: 56px; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; text-align: center; border-radius: 14px; padding: 10px 14px; font-weight: 500; }
+.feedback.good { background: var(--leaf-soft); }
+.feedback.bad { background: var(--berry-soft); }
+.feedback.info { background: var(--surface-2); color: var(--muted); }
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; width: 100%; max-width: 560px; }
+.tile { border: 2px solid var(--line); border-radius: 16px; background: var(--surface-2); padding: 8px; position: relative; }
+.tile svg { width: 100%; height: auto; display: block; }
+.tile[aria-pressed="true"] { border-color: var(--sky); background: var(--sky-soft); box-shadow: 0 0 0 3px var(--sky); }
+.tile[aria-pressed="true"]::after { content: "✓"; position: absolute; top: 4px; right: 8px; font-weight: 800; color: var(--sky); font-size: 1.2rem; }
+.tile.wrongpick { border-color: var(--berry); box-shadow: 0 0 0 3px var(--berry); }
+.tile.missed { border-style: dashed; border-color: var(--leaf); }
+.plates { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 560px; }
+.plate { border: 2px solid var(--line); border-radius: 18px; background: var(--surface-2); padding: 10px; min-height: 150px; display: grid; align-content: start; gap: 8px; text-align: center; }
+.plate.active { border-color: var(--sky); box-shadow: 0 0 0 3px var(--sky); }
+.plate h4 { margin: 0; font-family: var(--font-display); font-size: 1.15rem; }
+.plate .count { font-variant-numeric: tabular-nums; color: var(--muted); font-size: .85rem; }
+.fruitrow { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+.fruit { border: none; background: none; padding: 0; width: 40px; height: 40px; }
+.fruit svg { width: 100%; height: 100%; }
+.pile { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; padding: 10px; border-radius: 16px; border: 2px dashed var(--line); width: 100%; max-width: 560px; min-height: 64px; }
+.story { background: var(--surface-2); border-radius: 16px; padding: 14px 16px; max-width: 62ch; font-size: 1rem; }
+.scroller { width: 100%; overflow-x: auto; }
+.scroller svg { min-width: 560px; width: 100%; }
+.jars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; width: 100%; max-width: 520px; }
+.kids { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 560px; }
+.kid { border: 2px solid var(--line); border-radius: 16px; padding: 10px; text-align: center; background: var(--surface-2); }
+.kid b { font-family: var(--font-display); font-size: 1.1rem; }
+.sentence { font-family: var(--font-display); font-size: clamp(1.25rem, 3.4vw, 1.6rem); font-weight: 700; text-align: center; }
+.sentence .blank { display: inline-block; min-width: 4.5em; border-bottom: 3px solid var(--ink); color: var(--leaf); }
+.grouparea { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 520px; }
+.gitem { width: 46px; height: 46px; border: none; background: none; padding: 0; }
+.gitem svg { width: 100%; height: 100%; }
+
+/* Results, certificate, teacher */
+.result { text-align: center; display: grid; gap: 12px; justify-items: center; padding-block: 10px; }
+.bigstars { font-size: 3rem; letter-spacing: 6px; color: var(--mango); }
+.bigstars i { font-style: normal; color: var(--line); }
+.cert { border: 6px double var(--mango); border-radius: 20px; background: var(--paper); color: #1E2A3B; padding: 28px 22px; text-align: center; display: grid; gap: 10px; max-width: 640px; margin: 18px auto; }
+.cert h2 { font-size: clamp(1.8rem, 6vw, 2.6rem); font-weight: 800; }
+.cert .name { font-family: var(--font-display); font-size: 2rem; font-weight: 700; border-bottom: 2px solid #1E2A3B; min-height: 1.4em; }
+.cert label { font-size: .85rem; color: #56666E; }
+.cert input { font: inherit; font-size: 1.1rem; padding: 8px 12px; border-radius: 10px; border: 2px solid #CADBD5; background: #fff; color: #1E2A3B; width: min(320px, 100%); justify-self: center; }
+dialog { border: 2px solid var(--ink); border-radius: 20px; background: var(--surface); color: var(--ink); max-width: min(760px, calc(100vw - 32px)); padding: 0; }
+dialog::backdrop { background: rgba(10, 20, 30, .5); }
+.dlg { padding: 20px; display: grid; gap: 12px; }
+.dlg h2 { font-size: 1.6rem; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+td.pg { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+@keyframes shake { 0%,100% { transform: translateX(0) } 25% { transform: translateX(-6px) } 75% { transform: translateX(6px) } }
+@keyframes pop { 0% { transform: scale(.6); opacity: 0 } 100% { transform: scale(1); opacity: 1 } }
+.pop { animation: pop .35s ease-out both; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+@media (max-width: 640px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero svg { max-width: 240px; order: -1; }
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .board { padding: 14px; }
+  .brand b { font-size: 1.25rem; }
+}
+</style>
+
+<div class="wrap">
+  <header class="bar">
+    <div class="brand">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="var(--paratha)" stroke="var(--ink)" stroke-width="5"/><path d="M50 6v88" stroke="var(--ink)" stroke-width="5"/><path d="M50 50L6 50" stroke="var(--ink)" stroke-width="5"/><path d="M6 50A44 44 0 0 1 50 6Z" fill="var(--shade)" stroke="var(--ink)" stroke-width="5"/></svg>
+      <div><b>Fair Share Mela</b><small>Maths Mela · Class 3 · Chapter 8</small></div>
+    </div>
+    <span class="pill star" id="totalStars" aria-live="polite">★ 0 / 36</span>
+    <button class="iconbtn" id="soundBtn" aria-pressed="true">Sound on</button>
+    <button class="iconbtn" id="teacherBtn">Teacher guide</button>
+  </header>
+  <main id="app"></main>
+</div>
+
+<dialog id="teacher">
+  <div class="dlg">
+    <h2>Teacher guide</h2>
+    <p style="margin:0;color:var(--muted)">Twelve stalls follow Chapter 8 page by page. Children earn up to 3 stars per stall for first-try answers. Questions shuffle every time, so a stall can be replayed. Use it on a smart board as a whole-class activity, or in pairs on tablets. As the textbook advises, call the fractions <b>one half</b> and <b>one quarter</b>, not "1 out of 2".</p>
+    <div class="tablewrap"><table id="tguide"><thead><tr><th>Stall</th><th>Book page</th><th>Children will…</th></tr></thead><tbody></tbody></table></div>
+    <p style="margin:0;font-size:.85rem;color:var(--muted)">Pair it with paper folding (p. 110, p. 113) and the fraction cards from the back of the book (p. 116). Stars are saved on this device only.</p>
+    <div><button class="go" id="closeTeacher">Close</button></div>
+  </div>
+</dialog>
+
+<script>
+(() => {
+"use strict";
+const NS = "http://www.w3.org/2000/svg";
+const $ = (s, el = document) => el.querySelector(s);
+function S(tag, attrs = {}, kids = []) {
+  const el = document.createElementNS(NS, tag);
+  for (const k in attrs) el.setAttribute(k, attrs[k]);
+  for (const c of [].concat(kids)) if (c) el.appendChild(c);
+  return el;
+}
+function H(tag, attrs = {}, kids = []) {
+  const el = document.createElement(tag);
+  for (const k in attrs) {
+    if (attrs[k] == null) continue;
+    if (k === "text") el.textContent = attrs[k];
+    else if (k === "html") el.innerHTML = attrs[k];
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), attrs[k]);
+    else el.setAttribute(k, attrs[k]);
+  }
+  for (const c of [].concat(kids)) if (c) el.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+  return el;
+}
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const rint = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+
+/* ---------- storage (per device, optional) ---------- */
+const KEY = "fair-share-mela-v1";
+let store = { stars: {}, name: "", sound: true };
+try { const raw = localStorage.getItem(KEY); if (raw) store = Object.assign(store, JSON.parse(raw)); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} };
+
+/* ---------- sound + speech ---------- */
+let actx = null;
+function tone(freqs, dur = 0.12, type = "triangle") {
+  if (!store.sound) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    let t = actx.currentTime;
+    for (const f of freqs) {
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = type; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.18, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + dur + 0.02); t += dur * 0.9;
+    }
+  } catch (e) {}
+}
+const sGood = () => tone([523, 659, 784], 0.11);
+const sBad = () => tone([300, 220], 0.16, "sawtooth");
+const sTap = () => tone([660], 0.05, "sine");
+const sWin = () => tone([523, 659, 784, 1046, 784, 1046], 0.13);
+function speak(text) {
+  try {
+    if (!("speechSynthesis" in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.replace(/<[^>]+>/g, ""));
+    u.rate = 0.9; u.lang = "en-IN";
+    const v = speechSynthesis.getVoices().find(v => /en-IN/i.test(v.lang)) || speechSynthesis.getVoices().find(v => /^en/i.test(v.lang));
+    if (v) u.voice = v;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+/* ---------- geometry: every figure is a list of parts {d, a} in a 200×200 box ---------- */
+const R = (x, y, w, h) => `M${x} ${y}h${w}v${h}h${-w}Z`;
+const P = pts => "M" + pts.map(p => p.join(" ")).join("L") + "Z";
+function vsplit(x, y, w, h, cuts) {
+  const xs = [0, ...cuts, 1]; const parts = [];
+  for (let i = 0; i < xs.length - 1; i++) { const a = x + w * xs[i], b = x + w * xs[i + 1]; parts.push({ d: R(a, y, b - a, h), a: (b - a) * h }); }
+  return parts;
+}
+function hsplit(x, y, w, h, cuts) {
+  const ys = [0, ...cuts, 1]; const parts = [];
+  for (let i = 0; i < ys.length - 1; i++) { const a = y + h * ys[i], b = y + h * ys[i + 1]; parts.push({ d: R(x, a, w, b - a), a: (b - a) * w }); }
+  return parts;
+}
+function grid(x, y, w, h, fx = .5, fy = .5) {
+  const cx = x + w * fx, cy = y + h * fy;
+  return [
+    { d: R(x, y, cx - x, cy - y), a: (cx - x) * (cy - y) },
+    { d: R(cx, y, x + w - cx, cy - y), a: (x + w - cx) * (cy - y) },
+    { d: R(cx, cy, x + w - cx, y + h - cy), a: (x + w - cx) * (y + h - cy) },
+    { d: R(x, cy, cx - x, y + h - cy), a: (cx - x) * (y + h - cy) },
+  ];
+}
+function diag4(x, y, w, h) {
+  const c = [x + w / 2, y + h / 2], A = [x, y], B = [x + w, y], C = [x + w, y + h], D = [x, y + h], a = w * h / 4;
+  return [{ d: P([A, B, c]), a }, { d: P([B, C, c]), a }, { d: P([C, D, c]), a }, { d: P([D, A, c]), a }];
+}
+function diag2(x, y, w, h) {
+  const A = [x, y], B = [x + w, y], C = [x + w, y + h], D = [x, y + h], a = w * h / 2;
+  return [{ d: P([A, B, C]), a }, { d: P([A, C, D]), a }];
+}
+function sectors(cx, cy, r, degs, start = -90) {
+  if (degs.length === 1) return [{ d: `M${cx - r} ${cy}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0Z`, a: 360 }];
+  const parts = []; let t = start;
+  for (const g of degs) {
+    const t1 = t * Math.PI / 180, t2 = (t + g) * Math.PI / 180;
+    const x1 = cx + r * Math.cos(t1), y1 = cy + r * Math.sin(t1), x2 = cx + r * Math.cos(t2), y2 = cy + r * Math.sin(t2);
+    parts.push({ d: `M${cx} ${cy}L${x1.toFixed(2)} ${y1.toFixed(2)}A${r} ${r} 0 ${g > 180 ? 1 : 0} 1 ${x2.toFixed(2)} ${y2.toFixed(2)}Z`, a: g });
+    t += g;
+  }
+  return parts;
+}
+const equalParts = parts => { const as = parts.map(p => p.a); const tot = as.reduce((s, v) => s + v, 0); return Math.max(...as) - Math.min(...as) < tot * 0.01; };
+
+const FOOD = {
+  paratha: { fill: "var(--paratha)", edge: "var(--paratha-edge)", cut: "var(--paratha-edge)" },
+  choc: { fill: "var(--choc)", edge: "var(--choc-edge)", cut: "#F7E7C9" },
+  chikki: { fill: "var(--chikki)", edge: "var(--chikki-edge)", cut: "var(--chikki-edge)" },
+  plain: { fill: "var(--paper)", edge: "#1E2A3B", cut: "#1E2A3B" },
+};
+// draw a figure; shaded = set of part indexes; returns {svg, paths}
+function drawFigure(fig, shaded = new Set(), opts = {}) {
+  const st = FOOD[fig.kind || "plain"];
+  const svg = S("svg", { viewBox: opts.viewBox || "0 0 200 200", role: "img", "aria-label": opts.label || "shape" });
+  const paths = fig.parts.map((p, i) => {
+    const el = S("path", { d: p.d, fill: shaded.has(i) ? "var(--shade)" : st.fill, stroke: st.cut, "stroke-width": 4, "stroke-linejoin": "round" });
+    svg.appendChild(el); return el;
+  });
+  if (fig.kind === "paratha") { // toasted spots
+    for (let i = 0; i < 9; i++) { const ang = i * 2.39, rr = 18 + (i * 23) % 60; svg.appendChild(S("circle", { cx: 100 + rr * Math.cos(ang), cy: 100 + rr * Math.sin(ang), r: 4, fill: "var(--paratha-edge)", opacity: .35, "pointer-events": "none" })); }
+  }
+  if (fig.kind === "chikki") {
+    for (let i = 0; i < 14; i++) svg.appendChild(S("ellipse", { cx: 32 + (i * 53) % 140, cy: 34 + (i * 37) % 132, rx: 5, ry: 3.5, fill: "#FFF1D6", opacity: .7, "pointer-events": "none" }));
+  }
+  if (fig.outline) svg.appendChild(S("path", { d: fig.outline, fill: "none", stroke: st.edge, "stroke-width": 5, "pointer-events": "none" }));
+  return { svg, paths };
+}
+const SHAPES = {
+  sq: { x: 20, y: 20, w: 160, h: 160 },
+  rect: { x: 10, y: 50, w: 180, h: 100 },
+};
+const fig = {
+  sqV: (cuts, kind = "plain") => ({ kind, parts: vsplit(20, 20, 160, 160, cuts), outline: R(20, 20, 160, 160) }),
+  sqH: (cuts, kind = "plain") => ({ kind, parts: hsplit(20, 20, 160, 160, cuts), outline: R(20, 20, 160, 160) }),
+  rcV: (cuts, kind = "plain") => ({ kind, parts: vsplit(10, 50, 180, 100, cuts), outline: R(10, 50, 180, 100) }),
+  rcH: (cuts, kind = "plain") => ({ kind, parts: hsplit(10, 50, 180, 100, cuts), outline: R(10, 50, 180, 100) }),
+  sqG: (fx, fy, kind = "plain") => ({ kind, parts: grid(20, 20, 160, 160, fx, fy), outline: R(20, 20, 160, 160) }),
+  rcG: (fx, fy, kind = "plain") => ({ kind, parts: grid(10, 50, 180, 100, fx, fy), outline: R(10, 50, 180, 100) }),
+  sqX: (kind = "plain") => ({ kind, parts: diag4(20, 20, 160, 160), outline: R(20, 20, 160, 160) }),
+  sqD: (kind = "plain") => ({ kind, parts: diag2(20, 20, 160, 160), outline: R(20, 20, 160, 160) }),
+  ci: (degs, kind = "plain", start = -90) => ({ kind, parts: sectors(100, 100, 85, degs, start), outline: sectors(100, 100, 85, [360])[0].d }),
+};
+
+/* ---------- small pictures ---------- */
+function mangoSVG() {
+  return S("svg", { viewBox: "0 0 40 40", "aria-hidden": "true" }, [
+    S("path", { d: "M20 7c9 0 15 8 14 17-1 8-8 12-15 11C11 34 6 28 7 20 8 12 13 7 20 7z", fill: "#F2A516", stroke: "#8C5C22", "stroke-width": 2 }),
+    S("path", { d: "M20 8c1-3 3-5 6-5", stroke: "#4E7A2B", "stroke-width": 2.5, fill: "none", "stroke-linecap": "round" }),
+    S("path", { d: "M26 4c4 0 7 2 8 5-4 1-7 0-8-5z", fill: "#3E9A5A" }),
+    S("ellipse", { cx: 15, cy: 17, rx: 3, ry: 5, fill: "#FFF3C4", opacity: .7 }),
+  ]);
+}
+const MARBLE_COLORS = ["#3B7FCC", "#C93A63", "#23875A", "#F2A516", "#7B5BC9"];
+function marbles(n, color, perRow = 5) {
+  const rows = Math.ceil(n / perRow), w = perRow * 22 + 4, h = Math.max(1, rows) * 22 + 4;
+  const svg = S("svg", { viewBox: `0 0 ${w} ${h}`, width: w, height: h, role: "img", "aria-label": `${n} marbles` });
+  for (let i = 0; i < n; i++) {
+    const cx = 13 + (i % perRow) * 22, cy = 13 + Math.floor(i / perRow) * 22;
+    svg.appendChild(S("circle", { cx, cy, r: 9, fill: color, stroke: "#1E2A3B", "stroke-width": 1.5 }));
+    svg.appendChild(S("circle", { cx: cx - 3, cy: cy - 3, r: 2.5, fill: "#fff", opacity: .8 }));
+  }
+  return svg;
+}
+function flowerSVG(on) {
+  const g = S("svg", { viewBox: "0 0 40 40", "aria-hidden": "true" });
+  for (let i = 0; i < 5; i++) { const a = i * 72 * Math.PI / 180; g.appendChild(S("circle", { cx: 20 + 9 * Math.cos(a), cy: 20 + 9 * Math.sin(a), r: 7, fill: on ? "#E8578A" : "var(--paper)", stroke: "#1E2A3B", "stroke-width": 1.6 })); }
+  g.appendChild(S("circle", { cx: 20, cy: 20, r: 5.5, fill: on ? "#F2A516" : "var(--paper)", stroke: "#1E2A3B", "stroke-width": 1.6 }));
+  return g;
+}
+function birdSVG(on) {
+  return S("svg", { viewBox: "0 0 40 40", "aria-hidden": "true" }, [
+    S("path", { d: "M6 24c0-9 7-15 15-15 6 0 10 4 11 8l5 1-5 3c-1 8-7 12-14 12-7 0-12-3-12-9z", fill: on ? "#3B7FCC" : "var(--paper)", stroke: "#1E2A3B", "stroke-width": 1.8, "stroke-linejoin": "round" }),
+    S("path", { d: "M12 22c4 5 10 5 13 1", fill: "none", stroke: "#1E2A3B", "stroke-width": 1.6 }),
+    S("circle", { cx: 26, cy: 15, r: 1.8, fill: "#1E2A3B" }),
+  ]);
+}
+
+/* ---------- game engine ---------- */
+const app = $("#app");
+let current = null; // {game, rounds, i, firstTry:[], missed}
+
+function totalStars() { return Object.values(store.stars).reduce((s, v) => s + v, 0); }
+function updateTotal() { $("#totalStars").textContent = `★ ${totalStars()} / ${GAMES.length * 3}`; }
+function starsText(n) { return "★".repeat(n) + `<i>${"★".repeat(3 - n)}</i>`; }
+
+function startGame(game) {
+  current = { game, rounds: game.make(), i: 0, results: [] };
+  window.scrollTo({ top: 0 });
+  renderRound();
+}
+function renderRound() {
+  const { game, rounds, i } = current;
+  const round = rounds[i];
+  let missed = false, solved = false;
+  app.innerHTML = "";
+  const dots = H("div", { class: "dots", "aria-label": `Question ${i + 1} of ${rounds.length}` });
+  rounds.forEach((_, k) => dots.appendChild(H("i", { class: k < i ? (current.results[k] ? "done" : "miss") : k === i ? "now" : "" })));
+  app.appendChild(H("div", { class: "gamehead" }, [
+    H("button", { class: "iconbtn", text: "← All stalls", onclick: home }),
+    H("h2", { text: game.title }), dots,
+  ]));
+  const promptP = H("p", { html: round.prompt });
+  const board = H("section", { class: "board" });
+  board.appendChild(H("div", { class: "prompt" }, [promptP, H("button", { class: "say", text: "🔊 Read", "aria-label": "Read the question aloud", onclick: () => speak(promptP.textContent) })]));
+  const stage = H("div", { class: "stage" });
+  const fb = H("div", { class: "feedback info", "aria-live": "polite", text: round.hint || "Take your time. You can try again if you miss." });
+  board.append(stage, fb);
+  app.appendChild(board);
+  const ctx = {
+    setPrompt(html) { promptP.innerHTML = html; },
+    ok(msg) {
+      if (solved) return; solved = true; sGood();
+      current.results[i] = !missed;
+      fb.className = "feedback good pop"; fb.innerHTML = "";
+      fb.append(H("span", { html: "<b>Well done!</b> " + (msg || "") }));
+      const last = i === rounds.length - 1;
+      const nb = H("button", { class: "go", text: last ? "See my stars" : "Next →", onclick: () => { if (last) finish(); else { current.i++; renderRound(); } } });
+      fb.append(nb); nb.focus({ preventScroll: true });
+    },
+    bad(msg) {
+      if (solved) return; missed = true; sBad();
+      fb.className = "feedback bad"; fb.innerHTML = "";
+      fb.append(H("span", { html: msg || "Not quite. Look again and try once more." }));
+      fb.style.animation = "none"; void fb.offsetWidth; fb.style.animation = "shake .35s";
+    },
+    info(msg) { if (!solved) { fb.className = "feedback info"; fb.innerHTML = msg; } },
+    get solved() { return solved; },
+  };
+  round.render(stage, ctx);
+}
+function finish() {
+  const { game, results } = current;
+  const n = results.filter(Boolean).length, tot = results.length, ratio = n / tot;
+  const stars = ratio >= 0.85 ? 3 : ratio >= 0.55 ? 2 : 1;
+  const best = Math.max(store.stars[game.id] || 0, stars);
+  store.stars[game.id] = best; save(); updateTotal(); sWin();
+  app.innerHTML = "";
+  const idx = GAMES.indexOf(game), next = GAMES[idx + 1];
+  const msg = stars === 3 ? "Super! You are a fair-share expert." : stars === 2 ? "Good work! Play again to win all 3 stars." : "Nice try! Play again and you will get better.";
+  app.appendChild(H("section", { class: "board" }, [H("div", { class: "result" }, [
+    H("h2", { text: game.title, style: "font-size:1.8rem" }),
+    H("div", { class: "bigstars pop", html: starsText(stars) }),
+    H("p", { text: `${n} of ${tot} correct on the first try. ${msg}`, style: "margin:0;font-size:1.1rem" }),
+    H("div", { class: "choices" }, [
+      H("button", { class: "go alt", text: "← All stalls", onclick: home }),
+      H("button", { class: "go alt", text: "Play again", onclick: () => startGame(game) }),
+      next ? H("button", { class: "go", text: `Next stall: ${next.title} →`, onclick: () => startGame(next) }) : H("button", { class: "go", text: "Back to the Mela", onclick: home }),
+    ]),
+  ])]));
+}
+
+/* reusable: multiple-choice buttons */
+function choiceRow(stage, ctx, options, onRight) {
+  const row = H("div", { class: "choices" });
+  options.forEach(o => {
+    const b = H("button", { class: "choice" + (o.card ? " card" : "") });
+    if (o.node) b.appendChild(o.node);
+    if (o.label != null) b.appendChild(H("span", { html: String(o.label) }));
+    b.addEventListener("click", () => {
+      if (ctx.solved) return;
+      if (o.ok) { b.classList.add("good"); row.querySelectorAll("button").forEach(x => x.disabled = true); if (onRight) onRight(o); ctx.ok(o.why); }
+      else { b.classList.remove("bad"); void b.offsetWidth; b.classList.add("bad"); ctx.bad(o.why); }
+    });
+    row.appendChild(b);
+  });
+  stage.appendChild(row);
+  return row;
+}
+/* reusable: pick-all tiles */
+function tileHunt(stage, ctx, items, msgOk, wrongWord) {
+  const wrap = H("div", { class: "tiles" });
+  const btns = items.map((it, k) => {
+    const { svg } = drawFigure(it.fig, it.shade, { label: `shape ${k + 1}` });
+    const b = H("button", { class: "tile", "aria-pressed": "false", "aria-label": `Shape ${k + 1}` }, [svg]);
+    b.addEventListener("click", () => { if (ctx.solved) return; sTap(); b.classList.remove("wrongpick", "missed"); b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") === "true" ? "false" : "true"); });
+    wrap.appendChild(b); return b;
+  });
+  stage.appendChild(wrap);
+  stage.appendChild(H("button", { class: "go", text: "Check", onclick: () => {
+    if (ctx.solved) return;
+    let wrong = 0, miss = 0;
+    btns.forEach((b, k) => { const on = b.getAttribute("aria-pressed") === "true"; b.classList.remove("wrongpick", "missed"); if (on && !items[k].ok) { wrong++; b.classList.add("wrongpick"); } if (!on && items[k].ok) miss++; });
+    if (!wrong && !miss) { btns.forEach(b => b.disabled = true); ctx.ok(msgOk); }
+    else if (wrong) ctx.bad(`The shapes with a red ring are not ${wrongWord}. Check if the parts are the same size.`);
+    else ctx.bad(`You found some! ${miss === 1 ? "One more is" : miss + " more are"} hiding. Look carefully.`);
+  } }));
+}
+
+/* ================= GAMES ================= */
+const GAMES = [];
+
+/* 1. Fair or Not Fair? */
+GAMES.push({
+  id: "fair", sec: 0, title: "Fair or Not Fair?", page: "108–109", c1: "var(--paratha)",
+  lo: "Check whether a whole is cut into equal parts (fair share) by comparing the size of the pieces.",
+  art: () => drawFigure(fig.ci([180, 180], "paratha")).svg,
+  make() {
+    const fair = [
+      () => ({ f: fig.ci([180, 180], "paratha"), who: "paratha", n: 2 }),
+      () => ({ f: fig.ci([90, 90, 90, 90], "paratha", -45), who: "paratha", n: 4 }),
+      () => ({ f: fig.rcV([.5], "choc"), who: "chocolate", n: 2 }),
+      () => ({ f: fig.rcV([.25, .5, .75], "choc"), who: "chocolate", n: 4 }),
+      () => ({ f: fig.sqG(.5, .5, "chikki"), who: "chikki", n: 4 }),
+      () => ({ f: fig.sqD("chikki"), who: "chikki", n: 2 }),
+      () => ({ f: fig.sqH([.5], "chikki"), who: "chikki", n: 2 }),
+    ];
+    const unfair = [
+      () => ({ f: fig.ci([215, 145], "paratha"), who: "paratha", n: 2 }),
+      () => ({ f: fig.ci([130, 90, 75, 65], "paratha"), who: "paratha", n: 4 }),
+      () => ({ f: fig.rcV([.36], "choc"), who: "chocolate", n: 2 }),
+      () => ({ f: fig.rcV([.18, .45, .77], "choc"), who: "chocolate", n: 4 }),
+      () => ({ f: fig.sqG(.34, .62, "chikki"), who: "chikki", n: 4 }),
+      () => ({ f: fig.sqV([.3], "chikki"), who: "chikki", n: 2 }),
+      () => ({ f: fig.ci([180, 110, 70], "paratha"), who: "paratha", n: 3 }),
+    ];
+    const list = shuffle([...shuffle(fair).slice(0, 4), ...shuffle(unfair).slice(0, 4)]);
+    return list.map(mk => {
+      const r = mk(), isFair = equalParts(r.f.parts);
+      const people = r.n === 2 ? "Shabnam and Mukta" : r.n === 3 ? "three friends" : "four friends";
+      return {
+        prompt: `The ${r.who} is cut for <b>${people}</b>. Is it a <b>fair share</b>?`,
+        hint: "Fair share means every piece is the same size.",
+        render(stage, ctx) {
+          const { svg, paths } = drawFigure(r.f, new Set(), { label: r.who });
+          svg.setAttribute("width", 260); stage.appendChild(svg);
+          choiceRow(stage, ctx, [
+            { label: "Fair: all pieces equal", ok: isFair, why: isFair ? "Every piece is the same size, so everyone gets an equal share." : "Look again. Is one piece bigger than another?" },
+            { label: "Not fair", ok: !isFair, why: !isFair ? "One piece is bigger. Someone would get more!" : "Look again. Try folding it in your mind: do the pieces match?" },
+          ], () => {
+            if (!isFair) { const as = r.f.parts.map(p => p.a); paths[as.indexOf(Math.max(...as))].setAttribute("fill", "var(--berry)"); }
+          });
+        },
+      };
+    });
+  },
+});
+
+/* 2. Half Hunt */
+function huntRounds(mode) {
+  const out = [];
+  for (let r = 0; r < 3; r++) {
+    let good, bad;
+    if (mode === "half") {
+      good = [
+        () => ({ fig: fig.sqV([.5]), shade: new Set([0]) }),
+        () => ({ fig: fig.rcH([.5]), shade: new Set([1]) }),
+        () => ({ fig: fig.ci([180, 180]), shade: new Set([1]) }),
+        () => ({ fig: fig.sqD(), shade: new Set([0]) }),
+        () => ({ fig: fig.ci([180, 180], "plain", 0), shade: new Set([0]) }),
+        () => ({ fig: fig.rcV([.5]), shade: new Set([0]) }),
+        ...(r > 0 ? [() => ({ fig: fig.sqG(.5, .5), shade: new Set([0, 1]) }), () => ({ fig: fig.sqX(), shade: new Set([0, 2]) }), () => ({ fig: fig.ci([90, 90, 90, 90]), shade: new Set([1, 2]) })] : []),
+      ];
+      bad = [
+        () => ({ fig: fig.sqV([.33]), shade: new Set([0]) }),
+        () => ({ fig: fig.ci([240, 120]), shade: new Set([1]) }),
+        () => ({ fig: fig.rcV([1 / 3, 2 / 3]), shade: new Set([1]) }),
+        () => ({ fig: fig.sqG(.5, .5), shade: new Set([2]) }),
+        () => ({ fig: fig.rcH([.7]), shade: new Set([0]) }),
+        () => ({ fig: fig.ci([90, 90, 90, 90]), shade: new Set([0]) }),
+        () => ({ fig: fig.sqH([.62]), shade: new Set([1]) }),
+      ];
+    } else {
+      good = [
+        () => ({ fig: fig.sqG(.5, .5), shade: new Set([rint(0, 3)]) }),
+        () => ({ fig: fig.sqX(), shade: new Set([rint(0, 3)]) }),
+        () => ({ fig: fig.ci([90, 90, 90, 90]), shade: new Set([rint(0, 3)]) }),
+        () => ({ fig: fig.ci([90, 90, 90, 90], "plain", -45), shade: new Set([rint(0, 3)]) }),
+        () => ({ fig: fig.rcV([.25, .5, .75]), shade: new Set([rint(0, 3)]) }),
+        () => ({ fig: fig.sqH([.25, .5, .75]), shade: new Set([rint(0, 3)]) }),
+        () => ({ fig: fig.rcG(.5, .5), shade: new Set([rint(0, 3)]) }),
+      ];
+      bad = [
+        () => ({ fig: fig.sqG(.35, .62), shade: new Set([0]) }),
+        () => ({ fig: fig.rcV([.2, .45, .72]), shade: new Set([1]) }),
+        () => ({ fig: fig.ci([120, 120, 120]), shade: new Set([0]) }),
+        () => ({ fig: fig.sqV([.5]), shade: new Set([0]) }),
+        () => ({ fig: fig.ci([110, 70, 100, 80]), shade: new Set([2]) }),
+        () => ({ fig: fig.sqH([1 / 3, 2 / 3]), shade: new Set([0]) }),
+      ];
+    }
+    const nGood = r === 0 ? 2 : 3;
+    const items = shuffle([...shuffle(good).slice(0, nGood).map(f => ({ ...f(), ok: true })), ...shuffle(bad).slice(0, 6 - nGood).map(f => ({ ...f(), ok: false }))]);
+    out.push({
+      prompt: mode === "half"
+        ? (r === 0 ? "Tap every shape where <b>one half</b> is coloured. Then press Check." : "Tap every shape where <b>half</b> of the whole is coloured. Remember: 2 quarters also make a half!")
+        : "Tap every shape that is cut into <b>quarters</b> (4 equal parts). Then press Check.",
+      hint: mode === "half" ? "A half means 2 equal parts. One of them is coloured." : "Quarters means 4 parts that are all the same size.",
+      render(stage, ctx) { tileHunt(stage, ctx, items, mode === "half" ? "You found every half!" : "You found every shape cut into quarters!", mode === "half" ? "halves" : "quarters"); },
+    });
+  }
+  return out;
+}
+GAMES.push({
+  id: "halfhunt", sec: 0, title: "Half Hunt", page: "109", c1: "var(--shade)",
+  lo: "Identify shapes in which exactly one half of the whole is shaded, including 2 quarters as a half.",
+  art: () => drawFigure(fig.sqV([.5]), new Set([0])).svg,
+  make: () => huntRounds("half"),
+});
+
+/* 3. Cut it in Half */
+GAMES.push({
+  id: "cut", sec: 0, title: "Cut it in Half", page: "109–110", c1: "var(--sky)",
+  lo: "Find different ways of folding or cutting a shape into two equal halves (paper-folding activity).",
+  art: () => { const s = drawFigure(fig.sqD()).svg; return s; },
+  make() {
+    const deg = (a, r = 85) => { const t = a * Math.PI / 180; return [100 + r * Math.cos(t), 100 + r * Math.sin(t), 100 - r * Math.cos(t), 100 - r * Math.sin(t)]; };
+    const chord = (y) => { const dx = Math.sqrt(85 * 85 - (y - 100) ** 2); return [100 - dx, y, 100 + dx, y]; };
+    const chordV = (x) => { const dy = Math.sqrt(85 * 85 - (x - 100) ** 2); return [x, 100 - dy, x, 100 + dy]; };
+    const rounds = [
+      { name: "square paper", f: { kind: "plain", parts: [{ d: R(20, 20, 160, 160), a: 1 }] }, lines: [[100, 20, 100, 180, 1], [20, 100, 180, 100, 1], [20, 20, 180, 180, 1], [180, 20, 20, 180, 1], [62, 20, 62, 180, 0], [20, 140, 180, 140, 0]] },
+      { name: "rectangle paper", f: { kind: "plain", parts: [{ d: R(10, 50, 180, 100), a: 1 }] }, lines: [[100, 50, 100, 150, 1], [10, 100, 190, 100, 1], [10, 50, 190, 150, 1], [190, 50, 10, 150, 1], [70, 50, 70, 150, 0], [10, 50, 100, 150, 0]] },
+      { name: "round roti", f: { kind: "paratha", parts: sectors(100, 100, 85, [360]) }, lines: [[...deg(0), 1], [...deg(60), 1], [...deg(120), 1], [...chord(55), 0], [...chordV(150), 0]] },
+      { name: "triangle sandwich", f: { kind: "chikki", parts: [{ d: P([[100, 20], [180, 180], [20, 180]]), a: 1 }] }, lines: [[100, 20, 100, 180, 1], [60, 100, 140, 100, 0], [65, 90, 65, 180, 0]] },
+    ];
+    return rounds.map(rd => {
+      const need = rd.lines.filter(l => l[4]).length;
+      return {
+        prompt: `Tap <b>all</b> the dashed lines that cut the ${rd.name} into <b>two equal halves</b>. There are <b>${need}</b> ways. Then press Check.`,
+        hint: "Imagine folding along the line. Do both sides match exactly?",
+        render(stage, ctx) {
+          const { svg } = drawFigure(rd.f, new Set(), { label: rd.name });
+          svg.setAttribute("width", 300);
+          const picks = rd.lines.map(([x1, y1, x2, y2, ok], k) => {
+            const g = S("g", { tabindex: 0, role: "button", "aria-pressed": "false", "aria-label": `line ${k + 1}`, style: "cursor:pointer" });
+            const vis = S("line", { x1, y1, x2, y2, stroke: "var(--sky)", "stroke-width": 5, "stroke-dasharray": "10 8", "stroke-linecap": "round" });
+            const hit = S("line", { x1, y1, x2, y2, stroke: "transparent", "stroke-width": 22 });
+            g.append(vis, hit); svg.appendChild(g);
+            const toggle = () => { if (ctx.solved) return; sTap(); const on = g.getAttribute("aria-pressed") !== "true"; g.setAttribute("aria-pressed", on); vis.setAttribute("stroke", on ? "var(--berry)" : "var(--sky)"); vis.setAttribute("stroke-dasharray", on ? "none" : "10 8"); vis.setAttribute("stroke-width", on ? 7 : 5); };
+            g.addEventListener("click", toggle); g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+            return { g, vis, ok };
+          });
+          stage.appendChild(svg);
+          stage.appendChild(H("button", { class: "go", text: "Check", onclick: () => {
+            if (ctx.solved) return;
+            const on = p => p.g.getAttribute("aria-pressed") === "true";
+            const wrong = picks.filter(p => on(p) && !p.ok).length, found = picks.filter(p => on(p) && p.ok).length;
+            if (!wrong && found === need) { picks.forEach(p => { if (p.ok) { p.vis.setAttribute("stroke", "var(--leaf)"); p.vis.setAttribute("stroke-dasharray", "none"); } else p.vis.setAttribute("opacity", .25); }); ctx.ok(`There are many ways to make a half. You found all ${need}!`); }
+            else if (wrong) ctx.bad(`${wrong === 1 ? "One line you picked does" : wrong + " lines you picked do"} not make two equal parts. Tap a red line to remove it.`);
+            else ctx.bad(`You found ${found} of ${need}. Keep looking. Try the slanting lines too!`);
+          } }));
+        },
+      };
+    });
+  },
+});
+
+/* 4. Chikki Bite */
+GAMES.push({
+  id: "chikki", sec: 0, title: "Chikki Bite", page: "109", c1: "var(--chikki)",
+  lo: "Compare a part with one half: decide whether what is left is less than half, half or more than half.",
+  art: () => S("svg", { viewBox: "0 0 200 200" }, [S("path", { d: "M20 60h90l-8 12 8 12-8 12 8 12-8 12 8 10H20z", fill: "var(--chikki)", stroke: "var(--chikki-edge)", "stroke-width": 5 }), S("rect", { x: 20, y: 60, width: 160, height: 80, fill: "none", stroke: "var(--muted)", "stroke-width": 3, "stroke-dasharray": "8 6" })]),
+  make() {
+    const fs = shuffle([0.5, 0.5, 0.3, 0.72, 0.25, 0.8, 0.38, 0.64]).slice(0, 6);
+    if (!fs.includes(0.5)) fs[rint(0, 5)] = 0.5;
+    return fs.map((f, k) => {
+      const fromLeft = k % 2 === 1;
+      const ans = f === 0.5 ? "half" : f < 0.5 ? "less" : "more";
+      return {
+        prompt: `Shabnam took bites from her chikki. How much chikki is <b>left</b>?`,
+        hint: "The dashed outline shows the whole chikki before anyone ate it.",
+        render(stage, ctx) {
+          const X = 20, Y = 40, W = 260, Hh = 110, edge = W * f;
+          const svg = S("svg", { viewBox: "0 0 300 190", width: 360, role: "img", "aria-label": "chikki" });
+          svg.appendChild(S("rect", { x: X, y: Y, width: W, height: Hh, rx: 6, fill: "none", stroke: "var(--muted)", "stroke-width": 3, "stroke-dasharray": "9 7" }));
+          // remaining piece with bitten edge
+          const bx = fromLeft ? X + W - edge : X + edge; let d;
+          const zig = []; const steps = 6;
+          for (let s = 0; s <= steps; s++) zig.push([bx + (s % 2 ? (fromLeft ? 7 : -7) : 0), Y + Hh * s / steps]);
+          if (!fromLeft) d = `M${X} ${Y}L${zig.map(p => p.join(" ")).join("L")}L${X} ${Y + Hh}Z`;
+          else d = `M${X + W} ${Y}L${zig.map(p => p.join(" ")).join("L")}L${X + W} ${Y + Hh}Z`;
+          svg.appendChild(S("path", { d, fill: "var(--chikki)", stroke: "var(--chikki-edge)", "stroke-width": 4, "stroke-linejoin": "round" }));
+          for (let i = 0; i < 12; i++) { svg.appendChild(S("ellipse", { cx: fromLeft ? X + W - 12 - (i * 47) % Math.max(20, edge - 20) : X + 12 + (i * 47) % Math.max(20, edge - 20), cy: Y + 18 + (i * 29) % (Hh - 30), rx: 6, ry: 4, fill: "#FFF1D6", opacity: .75 })); }
+          for (let i = 0; i < 5; i++) svg.appendChild(S("circle", { cx: (fromLeft ? X + W - edge - 18 : X + edge + 18) + (i * 13) % 30 * (fromLeft ? -1 : 1), cy: Y + Hh + 18 + (i * 7) % 16, r: 3, fill: "var(--chikki)" }));
+          const half = S("g", { opacity: 0 }, [S("line", { x1: X + W / 2, y1: Y - 14, x2: X + W / 2, y2: Y + Hh + 8, stroke: "var(--sky)", "stroke-width": 4, "stroke-dasharray": "6 5" }), S("text", { x: X + W / 2, y: Y - 18, "text-anchor": "middle", "font-size": 16, "font-weight": 700, fill: "var(--sky)", "font-family": "Lexend, sans-serif" }, [document.createTextNode("half")])]);
+          svg.appendChild(half);
+          stage.appendChild(svg);
+          const why = { less: "Less than half is left. It does not reach the middle line.", half: "Exactly half is left. It stops right at the middle.", more: "More than half is left. It goes past the middle line." };
+          choiceRow(stage, ctx, [
+            { label: "Less than half", ok: ans === "less", why: ans === "less" ? why.less : "Look at where the middle of the whole chikki is." },
+            { label: "Half", ok: ans === "half", why: ans === "half" ? why.half : "Is it exactly at the middle? Look closely." },
+            { label: "More than half", ok: ans === "more", why: ans === "more" ? why.more : "Look at where the middle of the whole chikki is." },
+          ], () => half.setAttribute("opacity", 1));
+        },
+      };
+    });
+  },
+});
+
+/* 5. Mango Share */
+GAMES.push({
+  id: "mango", sec: 0, title: "Mango Share", page: "110", c1: "#F2A516",
+  lo: "Share a collection equally between two people and reason about whether a way of sharing is fair (Amit and Bala story).",
+  art: () => { const s = S("svg", { viewBox: "0 0 80 80" }); [[8, 30], [32, 30], [20, 6], [44, 6]].forEach(([x, y]) => { const m = mangoSVG(); m.setAttribute("x", x); m.setAttribute("y", y); m.setAttribute("width", 34); m.setAttribute("height", 34); s.appendChild(m); }); return s; },
+  make() {
+    const pairs = shuffle([["Shabnam", "Mukta"], ["Peehu", "Lakshanya"], ["Amit", "Bala"], ["Riya", "Arjun"]]);
+    const ns = shuffle([6, 8, 10, 12]);
+    const rounds = ns.map((n, k) => ({
+      prompt: `Share <b>${n} mangoes</b> equally between <b>${pairs[k][0]}</b> and <b>${pairs[k][1]}</b>. Tap a plate to choose it, then tap mangoes to put them on that plate.`,
+      hint: "Tap a mango on a plate to send it back to the basket.",
+      render(stage, ctx) {
+        let active = 0;
+        const counts = [0, 0];
+        const plates = pairs[k].map((name, p) => {
+          const row = H("div", { class: "fruitrow" });
+          const cnt = H("div", { class: "count", text: "0 mangoes" });
+          const el = H("button", { class: "plate" + (p === 0 ? " active" : ""), "aria-label": `${name}'s plate` }, [H("h4", { text: name }), cnt, row]);
+          el.addEventListener("click", e => { if (e.target.closest(".fruit")) return; active = p; plates.forEach((q, j) => q.el.classList.toggle("active", j === p)); sTap(); });
+          return { el, row, cnt };
+        });
+        const pile = H("div", { class: "pile", "aria-label": "basket of mangoes" });
+        const refresh = () => plates.forEach((pl, p) => pl.cnt.textContent = `${counts[p]} mango${counts[p] === 1 ? "" : "es"}`);
+        const makeFruit = () => {
+          const b = H("button", { class: "fruit", "aria-label": "mango" }, [mangoSVG()]);
+          let where = -1;
+          b.addEventListener("click", () => {
+            if (ctx.solved) return; sTap();
+            if (where === -1) { where = active; counts[where]++; plates[where].row.appendChild(b); }
+            else { counts[where]--; where = -1; pile.appendChild(b); }
+            refresh();
+          });
+          return b;
+        };
+        for (let i = 0; i < n; i++) pile.appendChild(makeFruit());
+        stage.appendChild(H("div", { class: "plates" }, plates.map(p => p.el)));
+        stage.appendChild(pile);
+        stage.appendChild(H("button", { class: "go", text: "Check", onclick: () => {
+          if (ctx.solved) return;
+          const left = n - counts[0] - counts[1];
+          if (left > 0) return ctx.bad(`There ${left === 1 ? "is still 1 mango" : `are still ${left} mangoes`} in the basket. Share all of them!`);
+          if (counts[0] !== counts[1]) return ctx.bad(`${counts[0] > counts[1] ? pairs[k][0] : pairs[k][1]} has more. That is not fair! Move a mango.`);
+          ctx.ok(`Each child gets ${n / 2} mangoes. ${n / 2} is <b>half</b> of ${n}.`);
+        } }));
+      },
+    }));
+    const story = "An old man gave his two sons, Amit and Bala, a <b>mango tree</b>, a <b>solar lamp</b> and a <b>woollen blanket</b>. Amit said: \"I keep the fruits, you keep the tree. I keep the lamp at night, you keep it in the day. I keep the blanket in winter, you keep it in summer.\"";
+    rounds.push({
+      prompt: "Read the story. Is Amit's way of sharing <b>fair</b>?",
+      render(stage, ctx) {
+        stage.appendChild(H("div", { class: "story", html: story }));
+        choiceRow(stage, ctx, [
+          { label: "Yes, it is fair", ok: false, why: "Think again. Who gets the useful part each time? A lamp is not needed in the day, and a blanket is not needed in summer!" },
+          { label: "No, it is not fair", ok: true, why: "Amit takes the useful part every time. Bala gets a tree with no fruit, a lamp in daylight and a blanket in hot summer." },
+        ]);
+      },
+    });
+    rounds.push({
+      prompt: "Which is a <b>fair</b> way for Amit and Bala to share?",
+      render(stage, ctx) {
+        const opts = shuffle([
+          { label: "Share the mangoes equally, and take turns with the lamp at night and the blanket in winter", ok: true, why: "Now both brothers get the useful part equally. That is a fair share!" },
+          { label: "Amit keeps all the mangoes and Bala keeps the tree", ok: false, why: "Bala gets no fruit at all. That is not fair." },
+          { label: "Bala keeps the blanket in summer only", ok: false, why: "Nobody needs a woollen blanket in summer. That is not fair to Bala." },
+        ]);
+        const col = H("div", { class: "choices", style: "flex-direction:column;align-items:stretch;max-width:560px;width:100%" });
+        stage.appendChild(col);
+        choiceRow(col, ctx, opts).style.flexDirection = "column";
+      },
+    });
+    return rounds;
+  },
+});
+
+/* 6. Half & Double Marbles */
+GAMES.push({
+  id: "double", sec: 1, title: "Half & Double Marbles", page: "111", c1: "var(--berry)",
+  lo: "Use the words half and double to compare two collections (for example, 6 is half of 12; 12 is double of 6).",
+  art: () => marbles(6, "#C93A63", 3),
+  make() {
+    const names = ["Shabnam", "Mukta", "Peehu", "Lakshanya", "Ravi", "Tara"];
+    const ns = shuffle([2, 3, 4, 5, 6, 7, 8, 9, 10]).slice(0, 8);
+    return ns.map((n, k) => {
+      const [a, b] = shuffle(names).slice(0, 2);
+      const askHalf = k % 2 === 0;
+      const small = n, big = 2 * n;
+      const c1 = MARBLE_COLORS[k % 5], c2 = MARBLE_COLORS[(k + 2) % 5];
+      return {
+        prompt: `${a} got <b>${small}</b> marbles. ${b} got <b>${big}</b> marbles. Fill in the blank.`,
+        hint: "Double means two times as many. Half means split into 2 equal groups.",
+        render(stage, ctx) {
+          stage.appendChild(H("div", { class: "kids" }, [
+            H("div", { class: "kid" }, [H("b", { text: a }), H("div", { text: `${small} marbles` }), marbles(small, c1)]),
+            H("div", { class: "kid" }, [H("b", { text: b }), H("div", { text: `${big} marbles` }), marbles(big, c2)]),
+          ]));
+          const blank = H("span", { class: "blank", html: "&nbsp;?&nbsp;" });
+          const sent = askHalf ? [`${small} marbles are `, blank, ` of ${big} marbles.`] : [`${big} marbles are `, blank, ` of ${small} marbles.`];
+          stage.appendChild(H("div", { class: "sentence" }, sent));
+          choiceRow(stage, ctx, [
+            { label: "half", ok: askHalf, why: askHalf ? `${small} + ${small} = ${big}, so ${small} is half of ${big}.` : `Is ${big} smaller than ${small}? Half would be smaller.` },
+            { label: "double", ok: !askHalf, why: !askHalf ? `${small} + ${small} = ${big}, so ${big} is double of ${small}.` : `Is ${small} bigger than ${big}? Double would be bigger.` },
+          ], o => blank.textContent = o.label);
+        },
+      };
+    });
+  },
+});
+
+/* 7. Number Line Jump */
+GAMES.push({
+  id: "line", sec: 1, title: "Number Line Jump", page: "111", c1: "var(--leaf)",
+  lo: "Find half and double of a number on a number line and say how far one number is from another.",
+  art: () => S("svg", { viewBox: "0 0 200 200" }, [S("line", { x1: 15, y1: 130, x2: 185, y2: 130, stroke: "var(--ink)", "stroke-width": 5 }), S("path", { d: "M45 125Q100 40 155 125", fill: "none", stroke: "var(--leaf)", "stroke-width": 6, "stroke-dasharray": "10 7" }), S("circle", { cx: 155, cy: 130, r: 12, fill: "var(--mango)", stroke: "var(--ink)", "stroke-width": 4 })]),
+  make() {
+    const rounds = [];
+    const dn = shuffle([3, 4, 5, 6, 7, 8, 9]);
+    const hn = shuffle([8, 10, 12, 14, 16, 18]);
+    rounds.push({ kind: "tap", q: `double of <b>${dn[0]}</b>`, ans: dn[0] * 2, tell: `${dn[0]} + ${dn[0]} = ${dn[0] * 2}` });
+    rounds.push({ kind: "tap", q: `half of <b>${hn[0]}</b>`, ans: hn[0] / 2, tell: `${hn[0] / 2} + ${hn[0] / 2} = ${hn[0]}` });
+    rounds.push({ kind: "tap", q: `double of <b>${dn[1]}</b>`, ans: dn[1] * 2, tell: `${dn[1]} + ${dn[1]} = ${dn[1] * 2}` });
+    const d1 = dn[2] * 2, from1 = d1 + pick([-3, -2, -1, 1, 2]);
+    rounds.push({ kind: "far", q: `double of <b>${dn[2]}</b>`, ans: d1, from: from1, tell: `double of ${dn[2]} is ${d1}` });
+    const h2 = hn[1] / 2, from2 = Math.max(0, h2 + pick([-3, -2, 2, 3]));
+    rounds.push({ kind: "far", q: `half of <b>${hn[1]}</b>`, ans: h2, from: from2, tell: `half of ${hn[1]} is ${h2}` });
+    const d3 = dn[3] * 2, from3 = Math.min(20, d3 + pick([-2, -1, 1, 3]));
+    rounds.push({ kind: "far", q: `double of <b>${dn[3]}</b>`, ans: d3, from: from3, tell: `double of ${dn[3]} is ${d3}` });
+    return rounds.map(rd => ({
+      prompt: rd.kind === "tap" ? `Tap the number that is the ${rd.q}.` : `How far is <b>${rd.from}</b> from the ${rd.q}? First, tap the ${rd.q} on the number line.`,
+      hint: "Tap a number on the line. Scroll sideways if you cannot see all of it.",
+      render(stage, ctx) {
+        const X0 = 30, SP = 29, Y = 80;
+        const svg = S("svg", { viewBox: "0 0 640 130", role: "img", "aria-label": "number line from 0 to 20" });
+        svg.appendChild(S("line", { x1: 12, y1: Y, x2: 628, y2: Y, stroke: "var(--ink)", "stroke-width": 3 }));
+        const arcs = S("g"); svg.appendChild(arcs);
+        let stepDone = false;
+        const marks = [];
+        for (let i = 0; i <= 20; i++) {
+          const x = X0 + i * SP;
+          const g = S("g", { tabindex: 0, role: "button", "aria-label": `number ${i}`, style: "cursor:pointer" });
+          const dot = S("circle", { cx: x, cy: Y, r: 9, fill: "var(--surface)", stroke: "var(--ink)", "stroke-width": 2.5 });
+          g.append(S("rect", { x: x - SP / 2, y: Y - 40, width: SP, height: 80, fill: "transparent" }), dot,
+            S("text", { x, y: Y + 32, "text-anchor": "middle", "font-size": 17, "font-weight": 600, fill: "var(--ink)", "font-family": "Lexend, sans-serif" }, [document.createTextNode(i)]));
+          if (rd.kind === "far" && i === rd.from) dot.setAttribute("fill", "var(--sky)");
+          const act = () => {
+            if (ctx.solved || stepDone) return;
+            if (i === rd.ans) {
+              dot.setAttribute("fill", "var(--mango)"); sTap();
+              if (rd.kind === "tap") { stepDone = true; ctx.ok(`${rd.tell}.`); }
+              else {
+                stepDone = true;
+                const a = X0 + Math.min(rd.from, rd.ans) * SP, b = X0 + Math.max(rd.from, rd.ans) * SP;
+                const n = Math.abs(rd.from - rd.ans);
+                for (let s = 0; s < n; s++) { const xa = a + s * SP; arcs.appendChild(S("path", { d: `M${xa} ${Y - 10}Q${xa + SP / 2} ${Y - 40} ${xa + SP} ${Y - 10}`, fill: "none", stroke: "var(--leaf)", "stroke-width": 3, class: "pop" })); }
+                ctx.setPrompt(`The ${rd.q} is <b>${rd.ans}</b>. Now: how far is <b>${rd.from}</b> from <b>${rd.ans}</b>? Count the jumps.`);
+                ctx.info("Count the green jumps between the blue dot and the orange dot.");
+                const opts = shuffle([...new Set([n, n + 1, Math.max(1, n - 1) === n ? n + 2 : Math.max(1, n - 1)])]).map(v => ({ label: v, ok: v === n, why: v === n ? `${rd.tell}. From ${rd.from} to ${rd.ans} is ${n} jump${n > 1 ? "s" : ""}.` : "Count the green jumps again, one by one." }));
+                choiceRow(stage, ctx, opts);
+              }
+            } else { dot.setAttribute("fill", "var(--berry-soft)"); ctx.bad(rd.q.includes("double") ? `Not ${i}. Double means add the number to itself.` : `Not ${i}. Half means two equal parts that add up to the number.`); }
+          };
+          g.addEventListener("click", act); g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); act(); } });
+          marks.push(g); svg.appendChild(g);
+        }
+        stage.appendChild(H("div", { class: "scroller" }, [svg]));
+      },
+    }));
+  },
+});
+
+/* 8. Guess Who Am I? */
+GAMES.push({
+  id: "guess", sec: 1, title: "Guess Who Am I?", page: "112", c1: "#7B5BC9",
+  lo: "Use clues with half and double (less than / more than) to find the right number.",
+  art: () => S("svg", { viewBox: "0 0 200 200" }, [S("circle", { cx: 100, cy: 100, r: 70, fill: "#7B5BC9", stroke: "var(--ink)", "stroke-width": 5 }), S("text", { x: 100, y: 128, "text-anchor": "middle", "font-size": 90, "font-weight": 800, fill: "#fff", "font-family": "Baloo 2, sans-serif" }, [document.createTextNode("?")])]),
+  make() {
+    const rounds = []; let guard = 0;
+    while (rounds.length < 5 && guard++ < 200) {
+      const a = rint(3, 7), b = 2 * rint(3, 7); // less than double of a, more than half of b
+      const lo = b / 2, hi = 2 * a; // lo < x < hi
+      if (hi - lo < 2) continue;
+      const ans = rint(lo + 1, hi - 1);
+      const tooSmall = rint(Math.max(1, lo - 2), lo), tooBig = rint(hi, hi + 2);
+      const key = `${a}-${b}`; if (rounds.some(r => r.key === key)) continue;
+      rounds.push({ key, a, b, ans, opts: shuffle([ans, tooSmall, tooBig]) });
+    }
+    return rounds.map((r, k) => ({
+      prompt: `Clue 1: I have <b>less than double of ${r.a}</b> marbles.<br>Clue 2: I have <b>more than half of ${r.b}</b> marbles.<br>Which jar am I?`,
+      hint: `Work out double of ${r.a} and half of ${r.b} first.`,
+      render(stage, ctx) {
+        const opts = r.opts.map((v, j) => {
+          const node = H("div", {}, [marbles(v, MARBLE_COLORS[(k + j) % 5], 4)]);
+          let why;
+          if (v === r.ans) why = `Double of ${r.a} is ${2 * r.a}. Half of ${r.b} is ${r.b / 2}. ${v} is less than ${2 * r.a} and more than ${r.b / 2}.`;
+          else if (v >= 2 * r.a) why = `${v} is not less than double of ${r.a} (${2 * r.a}). Try another jar.`;
+          else why = `${v} is not more than half of ${r.b} (${r.b / 2}). Try another jar.`;
+          return { node, label: `${v} marbles`, ok: v === r.ans, why, card: true };
+        });
+        choiceRow(stage, ctx, opts);
+      },
+    }));
+  },
+});
+
+/* 9. Quarter Quest */
+GAMES.push({
+  id: "quarter", sec: 2, title: "Quarter Quest", page: "112–113", c1: "var(--sky)",
+  lo: "Recognise a quarter: a whole shared equally among 4 is cut into 4 equal parts.",
+  art: () => drawFigure(fig.ci([90, 90, 90, 90]), new Set([0])).svg,
+  make: () => huntRounds("quarter"),
+});
+
+/* 10. Colour the Fraction */
+GAMES.push({
+  id: "colour", sec: 2, title: "Colour the Quarters", page: "115", c1: "var(--mango)",
+  lo: "Show 1 quarter, 2 quarters (half), 3 quarters and 4 quarters (the whole) by colouring parts.",
+  art: () => drawFigure(fig.sqG(.5, .5), new Set([0, 1, 2])).svg,
+  make() {
+    const tasks = shuffle([
+      { f: fig.sqG(.5, .5), k: 1, say: "1 quarter", done: "1 quarter is one of 4 equal parts." },
+      { f: fig.ci([90, 90, 90, 90]), k: 3, say: "3 quarters", done: "3 quarters coloured, 1 quarter left. Together they make the whole." },
+      { f: fig.rcV([.25, .5, .75]), k: 2, say: "2 quarters", done: "2 quarters make one half!" },
+      { f: fig.sqX(), k: 4, say: "4 quarters", done: "4 quarters make one complete whole!" },
+      { f: fig.ci([90, 90, 90, 90], "plain", -45), k: 2, say: "one half", done: "You coloured 2 quarters. 2 quarters = 1 half." },
+      { f: fig.rcG(.5, .5), k: 3, say: "3 quarters", done: "3 quarters means 3 of the 4 equal parts." },
+    ]);
+    return tasks.map(t => ({
+      prompt: `Tap the parts to colour <b>${t.say}</b> of the shape. Then press Check.`,
+      hint: "Tap a coloured part again to remove the colour.",
+      render(stage, ctx) {
+        const on = new Set();
+        const { svg, paths } = drawFigure(t.f, on, { label: "shape to colour" });
+        svg.setAttribute("width", 280);
+        paths.forEach((p, i) => {
+          p.style.cursor = "pointer"; p.setAttribute("tabindex", 0); p.setAttribute("role", "button"); p.setAttribute("aria-label", `part ${i + 1}`);
+          const tg = () => { if (ctx.solved) return; sTap(); if (on.has(i)) on.delete(i); else on.add(i); p.setAttribute("fill", on.has(i) ? "var(--shade)" : "var(--paper)"); };
+          p.addEventListener("click", tg); p.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tg(); } });
+        });
+        stage.appendChild(svg);
+        stage.appendChild(H("button", { class: "go", text: "Check", onclick: () => {
+          if (ctx.solved) return;
+          if (on.size === t.k) ctx.ok(t.done);
+          else ctx.bad(`You coloured ${on.size} part${on.size === 1 ? "" : "s"}. ${t.say} means ${t.k} part${t.k === 1 ? "" : "s"} out of the 4 equal parts. Try again.`);
+        } }));
+      },
+    }));
+  },
+});
+
+/* 11. Birds & Flowers */
+GAMES.push({
+  id: "group", sec: 2, title: "Birds & Flowers", page: "114", c1: "#E8578A",
+  lo: "Find half and a quarter of a collection of objects and compare using half and double.",
+  art: () => { const s = S("svg", { viewBox: "0 0 80 80" }); [[2, 2, 1], [40, 2, 0], [2, 40, 0], [40, 40, 0]].forEach(([x, y, o]) => { const f = flowerSVG(o); f.setAttribute("x", x); f.setAttribute("y", y); f.setAttribute("width", 38); f.setAttribute("height", 38); s.appendChild(f); }); return s; },
+  make() {
+    const word = { 2: "half", 4: "a quarter", "3/4": "three quarters" };
+    const A = (n, part, thing, who) => {
+      const k = part === "3/4" ? n * 3 / 4 : n / part, ans = word[part];
+      return {
+        prompt: `${who} coloured <b>${k}</b> of these <b>${n}</b> ${thing}s. What part of the ${thing}s did ${who} colour?`,
+        hint: "Make equal groups. 2 equal groups give halves. 4 equal groups give quarters.",
+        render(stage, ctx) {
+          const area = H("div", { class: "grouparea" });
+          for (let i = 0; i < n; i++) area.appendChild(H("span", { class: "gitem" }, [(thing === "bird" ? birdSVG : flowerSVG)(i < k)]));
+          stage.appendChild(area);
+          choiceRow(stage, ctx, ["half", "a quarter", "three quarters"].map(w => ({ label: w, ok: w === ans, why: w === ans ? `${n} shared into ${part === 2 ? 2 : 4} equal groups gives ${n / (part === 2 ? 2 : 4)} in each group. ${k} is ${ans} of ${n}.` : `Try making ${w === "half" ? 2 : 4} equal groups of the ${n} ${thing}s and count.` })));
+        },
+      };
+    };
+    const B = (n, part, thing) => {
+      const k = n / part, w = word[part];
+      return {
+        prompt: `Tap to colour <b>${w}</b> of the <b>${n}</b> ${thing}s. Then press Check.`,
+        hint: "Tap a coloured one again to un-colour it.",
+        render(stage, ctx) {
+          const area = H("div", { class: "grouparea" }); let c = 0;
+          for (let i = 0; i < n; i++) {
+            let on = false;
+            const b = H("button", { class: "gitem", "aria-label": `${thing} ${i + 1}` }, [(thing === "bird" ? birdSVG : flowerSVG)(false)]);
+            b.addEventListener("click", () => { if (ctx.solved) return; sTap(); on = !on; c += on ? 1 : -1; b.replaceChildren((thing === "bird" ? birdSVG : flowerSVG)(on)); });
+            area.appendChild(b);
+          }
+          stage.appendChild(area);
+          stage.appendChild(H("button", { class: "go", text: "Check", onclick: () => {
+            if (ctx.solved) return;
+            if (c === k) ctx.ok(`${n} ÷ ${part} equal groups = ${k}. You coloured ${w} of the ${thing}s.`);
+            else ctx.bad(`You coloured ${c}. Share the ${n} ${thing}s into ${part} equal groups. How many are in one group?`);
+          } }));
+        },
+      };
+    };
+    const C = {
+      prompt: "Lakshanya and Peehu have <b>16 flowers</b> each. Lakshanya tied <b>8</b> flowers. Peehu tied <b>4</b> flowers. Lakshanya tied ___ the number of flowers that Peehu tied.",
+      render(stage, ctx) {
+        const kids = H("div", { class: "kids" });
+        [["Lakshanya", 8], ["Peehu", 4]].forEach(([nm, k]) => { const a = H("div", { class: "grouparea" }); for (let i = 0; i < 16; i++) a.appendChild(H("span", { class: "gitem", style: "width:30px;height:30px" }, [flowerSVG(i < k)])); kids.appendChild(H("div", { class: "kid" }, [H("b", { text: nm }), a])); });
+        stage.appendChild(kids);
+        choiceRow(stage, ctx, [
+          { label: "half", ok: false, why: "Who tied more? 8 is bigger than 4." },
+          { label: "double", ok: true, why: "8 is double of 4. Lakshanya tied half of her flowers; Peehu tied a quarter." },
+        ]);
+      },
+    };
+    return [A(8, 2, "flower", "Mukta"), A(12, 4, "bird", "Shabnam"), A(16, "3/4", "flower", "Peehu"), B(12, 4, "bird"), B(16, 2, "flower"), C];
+  },
+});
+
+/* 12. Make a Whole */
+GAMES.push({
+  id: "whole", sec: 2, title: "Make a Whole", page: "116", c1: "var(--leaf)",
+  lo: "Combine halves and quarters to make one whole (fraction-card puzzle); know 2 halves = 4 quarters = 1 whole.",
+  art: () => drawFigure(fig.ci([180, 90, 90]), new Set([0, 1])).svg,
+  make() {
+    const piece = (deg, start = -90) => { const s = S("svg", { viewBox: "0 0 200 200", "aria-hidden": "true" }); s.appendChild(S("circle", { cx: 100, cy: 100, r: 85, fill: "none", stroke: "var(--line)", "stroke-width": 3, "stroke-dasharray": "6 6" })); s.appendChild(S("path", { d: deg >= 360 ? sectors(100, 100, 85, [360])[0].d : sectors(100, 100, 85, [deg], start)[0].d, fill: "var(--mango)", stroke: "#1E2A3B", "stroke-width": 4 })); return s; };
+    const board = (filled) => { // filled: degrees already placed
+      const s = S("svg", { viewBox: "0 0 200 200", width: 240, role: "img", "aria-label": "puzzle board" });
+      s.appendChild(S("circle", { cx: 100, cy: 100, r: 85, fill: "var(--surface-2)", stroke: "var(--ink)", "stroke-width": 3, "stroke-dasharray": "8 6" }));
+      let t = -90; const out = [];
+      filled.forEach((g, i) => { const p = S("path", { d: sectors(100, 100, 85, [g], t)[0].d, fill: i % 2 ? "var(--sky)" : "var(--leaf)", stroke: "var(--ink)", "stroke-width": 4 }); s.appendChild(p); t += g; });
+      const gap = S("path", { d: sectors(100, 100, 85, [360 - filled.reduce((a, b) => a + b, 0)], t)[0].d, fill: "var(--mango)", stroke: "var(--ink)", "stroke-width": 4, opacity: 0 }); s.appendChild(gap);
+      return { s, gap, t };
+    };
+    const NAME = { 90: "1 quarter", 180: "1 half", 270: "3 quarters" };
+    const fill = (have, nameHave) => {
+      const need = 360 - have.reduce((a, b) => a + b, 0);
+      return {
+        prompt: `The board has <b>${nameHave}</b>. Which fraction card completes the <b>whole</b>?`,
+        hint: "The dashed space shows what is missing.",
+        render(stage, ctx) {
+          const b = board(have); stage.appendChild(b.s);
+          choiceRow(stage, ctx, [90, 180, 270].map(g => ({ card: true, node: piece(g), label: NAME[g], ok: g === need, why: g === need ? `${nameHave} and ${NAME[g]} make one whole!` : `That card is too ${g > need ? "big" : "small"}. Look at the size of the empty space.` })), () => { b.gap.setAttribute("opacity", 1); b.gap.classList.add("pop"); });
+        },
+      };
+    };
+    const count = (q, ans, deg, msg) => ({
+      prompt: q,
+      render(stage, ctx) {
+        const s = S("svg", { viewBox: "0 0 200 200", width: 220, role: "img", "aria-label": "whole circle" });
+        s.appendChild(S("circle", { cx: 100, cy: 100, r: 85, fill: "var(--paratha)", stroke: "var(--paratha-edge)", "stroke-width": 4 }));
+        const parts = S("g", { opacity: 0 }); sectors(100, 100, 85, Array(360 / deg).fill(deg)).forEach(p => parts.appendChild(S("path", { d: p.d, fill: "none", stroke: "var(--ink)", "stroke-width": 4 }))); s.appendChild(parts);
+        stage.appendChild(s);
+        choiceRow(stage, ctx, [2, 3, 4].map(v => ({ label: v, ok: v === ans, why: v === ans ? msg : "Imagine cutting the paratha into equal pieces of that size. Count them." })), () => parts.setAttribute("opacity", 1));
+      },
+    });
+    return [
+      fill([180], "1 half"), fill([90], "1 quarter"), fill([90, 90], "2 quarters"), fill([180, 90], "1 half and 1 quarter"),
+      count("How many <b>halves</b> make one whole paratha?", 2, 180, "2 halves make 1 whole."),
+      count("How many <b>quarters</b> make one whole paratha?", 4, 90, "4 quarters make 1 whole. 2 quarters make 1 half."),
+    ];
+  },
+});
+
+/* ================= HOME ================= */
+const SECTIONS = [
+  { name: "Halves", note: "Pages 108–110 · fair share, one half, ways to make a half" },
+  { name: "Half and Double", note: "Pages 111–112 · marbles, number line, riddles" },
+  { name: "Quarters", note: "Pages 112–116 · one quarter, 3 quarters, making a whole" },
+];
+function heroArt() {
+  const s = S("svg", { viewBox: "0 0 340 220", role: "img", "aria-label": "A paratha cut into four quarters and a chocolate bar cut in half" });
+  const p = drawFigure(fig.ci([90, 90, 90, 90], "paratha", -45)).svg; p.setAttribute("x", 0); p.setAttribute("y", 10); p.setAttribute("width", 200); p.setAttribute("height", 200); s.appendChild(p);
+  const g = S("g", { transform: "translate(180 40) rotate(8)" });
+  vsplit(0, 0, 140, 70, [.5]).forEach(pt => g.appendChild(S("path", { d: pt.d, fill: "var(--choc)", stroke: "#F7E7C9", "stroke-width": 4 })));
+  g.appendChild(S("rect", { x: 0, y: 0, width: 140, height: 70, fill: "none", stroke: "var(--choc-edge)", "stroke-width": 5 }));
+  s.appendChild(g);
+  const m = mangoSVG(); m.setAttribute("x", 230); m.setAttribute("y", 125); m.setAttribute("width", 80); m.setAttribute("height", 80); s.appendChild(m);
+  return s;
+}
+function home() {
+  try { speechSynthesis.cancel(); } catch (e) {}
+  current = null; app.innerHTML = "";
+  const hero = H("section", { class: "hero" }, [
+    H("div", {}, [
+      H("h1", { html: "Is it a <em>fair</em> share?" }),
+      H("p", { text: "Shabnam and Mukta are sharing their lunch. Visit all 12 stalls of the Fair Share Mela to learn about halves, doubles and quarters. Win up to 3 stars at every stall!" }),
+    ]),
+    heroArt(),
+  ]);
+  app.appendChild(hero);
+  SECTIONS.forEach((sec, si) => {
+    app.appendChild(H("div", { class: "section-head" }, [H("h2", { text: sec.name }), H("span", { text: sec.note })]));
+    const row = H("div", { class: "stalls" });
+    GAMES.filter(g => g.sec === si).forEach(g => {
+      const art = g.art(); art.setAttribute("class", "art"); art.setAttribute("aria-hidden", "true");
+      const st = store.stars[g.id] || 0;
+      const b = H("button", { class: "stall", style: `--c1:${g.c1}`, "aria-label": `${g.title}, ${st} of 3 stars` }, [
+        H("div", { class: "awning" }),
+        H("div", { class: "body" }, [art, H("div", {}, [H("h3", { text: g.title }), H("div", { class: "meta", text: `Book page ${g.page}` }), H("div", { class: "stars", html: starsText(st) })])]),
+      ]);
+      b.addEventListener("click", () => { sTap(); startGame(g); });
+      row.appendChild(b);
+    });
+    app.appendChild(row);
+  });
+  const played = GAMES.filter(g => store.stars[g.id]).length;
+  app.appendChild(H("div", { class: "cert-banner" }, [
+    H("p", { html: played === GAMES.length ? "<b>You visited every stall!</b> Your Fair Share Champion certificate is ready." : `<b>Fair Share Champion certificate</b> · Play all 12 stalls to unlock it. You have played <b>${played}</b> of 12.` }),
+    H("button", { class: "go" + (played === GAMES.length ? "" : " alt"), text: played === GAMES.length ? "Open certificate" : "Locked", disabled: played === GAMES.length ? null : "", onclick: certificate }),
+  ]));
+}
+function certificate() {
+  app.innerHTML = ""; sWin();
+  const nameEl = H("div", { class: "name", text: store.name || "" });
+  const input = H("input", { id: "childName", placeholder: "Type your name", value: store.name || "", maxlength: 40 });
+  input.addEventListener("input", () => { store.name = input.value; nameEl.textContent = input.value; save(); });
+  const d = new Date().toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
+  app.appendChild(H("button", { class: "iconbtn", text: "← All stalls", onclick: home, style: "margin-top:6px" }));
+  app.appendChild(H("section", { class: "cert pop" }, [
+    H("div", { style: "font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:#56666E", text: "Maths Mela · Class 3 · Chapter 8" }),
+    H("h2", { text: "Fair Share Champion" }),
+    H("div", { text: "This certificate is proudly given to" }),
+    nameEl,
+    H("div", { html: `for completing all 12 stalls of the Fair Share Mela and earning <b>${totalStars()} of ${GAMES.length * 3} stars</b>. You know halves, doubles and quarters!` }),
+    H("div", { class: "bigstars", html: "★★★" }),
+    H("div", { style: "font-size:.9rem;color:#56666E", text: d }),
+    H("label", { for: "childName", text: "Your name" }), input,
+  ]));
+}
+
+/* ---------- teacher guide + header controls ---------- */
+const tbody = $("#tguide tbody");
+GAMES.forEach(g => tbody.appendChild(H("tr", {}, [H("td", { html: `<b>${g.title}</b>` }), H("td", { class: "pg", text: g.page }), H("td", { text: g.lo })])));
+$("#teacherBtn").addEventListener("click", () => { const d = $("#teacher"); if (d.showModal) d.showModal(); else d.setAttribute("open", ""); });
+$("#closeTeacher").addEventListener("click", () => { const d = $("#teacher"); if (d.close) d.close(); else d.removeAttribute("open"); });
+const sb = $("#soundBtn");
+const syncSound = () => { sb.setAttribute("aria-pressed", store.sound ? "true" : "false"); sb.textContent = store.sound ? "Sound on" : "Sound off"; };
+sb.addEventListener("click", () => { store.sound = !store.sound; save(); syncSound(); sTap(); });
+syncSound(); updateTotal(); home();
+})();
+</script>
